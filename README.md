@@ -27,11 +27,10 @@ You can install the extension via https://chrome.google.com/webstore/detail/gjde
                 click <img src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424391067/record_events_d9ih0o.png" /> to start the events recording
                 <ul>
                     <li>
-                        Now the extension will capture click, input the document level scroll events. You can click ![alt tag](http://res.cloudinary.com/hypr6wanu/image/upload/v1424391129/take_screenshot_ewfrwj.png) to take a screenshot as a checking point of the testing case.
+                        Now the extension will capture click, input the document level scroll events. You can click <img src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424391129/take_screenshot_ewfrwj.png" /> to take a screenshot as a checking point of the testing case.>
                     </li>
                     <li>
-                        In case of that the click event handler stops the default browser behavior, the Chrome Recorder cannot receive the click event. You can turn on the cursor position by clicking ![alt tag](http://res.cloudinary.com/hypr6wanu/image/upload/v1424391190/view_cursor_b8puce.png). Now the Chrome Record can capture the click event, however it will not trigger the actual click event. You need to click ![alt tag](http://res.cloudinary.com/hypr6wanu/image/upload/v1424391190/view_cursor_b8puce.png) again to turn it off and click the element.
-
+                        In case of that the click event handler stops the default browser behavior, the Chrome Recorder cannot receive the click event. You can turn on the cursor position by clicking <img src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424391190/view_cursor_b8puce.png" />. Now the Chrome Record can capture the click event, however it will not trigger the actual click event. You need to click <img src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424391190/view_cursor_b8puce.png" /> again to turn it off and click the element.>
                     </li>
                 </ul>
             </li>
