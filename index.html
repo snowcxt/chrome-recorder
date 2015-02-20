@@ -1,63 +1,175 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
-  <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="bootstrap.min.css" />
+    <style>
+        h1 img {
+            height: 100px;
+        }
+
+        p img, li img {
+            height: 25px;
+        }
+
+        dt img {
+            height: 25px;
+        }
+    </style>
     <title>Chrome-recorder by snowcxt</title>
-  </head>
+</head>
+<body>
+    <div class="container">
+        <div class="jumbotron">
+            <h1><img src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424411963/icon_zc0x6p.png" /> Chrome Recorder</h1>
+            <p>
+                Chrome Recorder is a chrome extension that can record the user interactions, take screenshots and replay the actions.
+            </p>
+            <p>
+                You can install the extension via <a target="_blank" href="https://chrome.google.com/webstore/detail/gjdedjgddbgejncikonfdikgmjakmnoi">Chrome store</a>.
+                After the installation, please restart the Chrome then you can launch this extension and upload the sample test - <a target="_blank" href="http://res.cloudinary.com/hypr6wanu/raw/upload/v1424411812/getbootstrap_d2t3u0.json">getbootstrap.json</a> by clicking <img src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424413351/upload_cghgc2.png" /> button and click <img src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424411316/run_test_zl4kbe.png" /> button to run the test.
+            </p>
+        </div>
+        <hr />
+        <h3>
+            Upload saved test case
+        </h3>
+        <p>
+            <img src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424390416/input-upload_mtz115.png" />
+        </p>
+        <p>
+            Input JSON- copy json into the textarea and click upload
+        </p>
+        <p>
+            Upload JSON- browse a json file and upload the file
+        </p>
+        <hr />
+        <h3>Save the test case</h3>
+        <p>
+            <img src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424411545/download_json_pkcaly.png" />
+        </p>
+        <p>
+            View JSON - view the whole json file
+        </p>
+        <p>
+            Download JSON - download the json file
+        </p>
+        <hr />
+        <h3>Create a new test case</h3>
+        <p class="alert alert-danger" role="alert">
+            Chrome Recorder now can only record clicks, inputs and document level scroll events
+        </p>
 
-  <body>
-    <div id="container">
-      <div class="inner">
+        <ol>
+            <li>
+                input the url, window type and window size
+            </li>
+            <li>
+                click <img src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424391067/record_events_d9ih0o.png" /> to open the url.
+                <span class="text-danger">(Please do not resize the window. If you want to change the size, please input the window size again and open a new window) </span>
+            </li>
+            <li>
+                click <img src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424391067/record_events_d9ih0o.png" /> to start the events recording
+                <p>
+                    Now the extension will capture click, input the document level scroll events. You can click <img src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424391129/take_screenshot_ewfrwj.png" /> to take a screenshot as a checking point of the testing case.
+                </p>
+                <p>
+                    In case of that the click event handler stops the default browser behavior, the Chrome Recorder cannot receive the click event. You can turn on the cursor position by clicking <img src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424391190/view_cursor_b8puce.png" />. Now the Chrome Record can capture the click event, however it will not trigger the actual click event. You need to click <img src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424391190/view_cursor_b8puce.png" /> again to turn it off and click the element.
+                </p>
+            </li>
+            <li>
+                click <img src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424390416/waitfor_tj3z26.png" /> to get an element for waiting. The test case will pause the test process until the selected element shows up.
+            </li>
+            <li>
+                click <img src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424391318/stop_nnm3en.png" /> / <img src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424391318/resume_gxo6te.png" /> button to stop / resume the events capture
+            </li>
+        </ol>
+        <hr />
+        <h3>
+            Edit an event
+        </h3>
 
-        <header>
-          <h1>Chrome-recorder</h1>
-          <h2></h2>
-        </header>
+        <div class="media">
+            <div class="media-left">
+                <img class="media-object" src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424411040/play_onfqyr.png">
 
-        <section id="downloads" class="clearfix">
-          <a href="https://github.com/snowcxt/chrome-recorder/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
-          <a href="https://github.com/snowcxt/chrome-recorder/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
-          <a href="https://github.com/snowcxt/chrome-recorder" id="view-on-github" class="button"><span>View on GitHub</span></a>
-        </section>
+            </div>
+            <div class="media-body">
+                <h4 class="media-heading">Play</h4>
+                play the event. (only available when the url is open and event capture is stopped)
+            </div>
+        </div>
+        <div class="media">
+            <div class="media-left">
+                <img class="media-object" src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424411040/play_blow_lsb9hp.png">
 
-        <hr>
+            </div>
+            <div class="media-body">
+                <h4 class="media-heading">Play below</h4>
+                play all the events below. It is a good way to test the delay/wait time and events sequence. You can stop the test by clicking <img src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424410487/stop_test_ryu7wj.png" /> at any time. (only available when the url is open and event capture is stopped)
+            </div>
+        </div>
+        <div class="media">
+            <div class="media-left">
+                <img class="media-object" src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424411040/flag_rlswb3.png">
 
-        <section id="main_content">
-          <h1>
-<a id="chrome-recorder" class="anchor" href="#chrome-recorder" aria-hidden="true"><span class="octicon octicon-link"></span></a>Chrome Recorder</h1>
+            </div>
+            <div class="media-body">
+                <h4 class="media-heading">Flag</h4>
+                highlight the click/input/wait for element position on the page. (only available when the url is open)
+            </div>
+        </div>
+        <div class="media">
+            <div class="media-left">
+                <img class="media-object" src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424411041/view_json_bvbagn.png">
 
-<p>Chrome Recorder is a chrome extension that can record the user interactions, take screenshots and replay the actions. </p>
+            </div>
+            <div class="media-body">
+                <h4 class="media-heading">View</h4>
+                view the JSON of an event
+            </div>
+        </div>
+        <div class="media">
+            <div class="media-left">
+                <img class="media-object" src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424411040/edit_json_vekwjv.png">
 
-<h3>
-<a id="todo" class="anchor" href="#todo" aria-hidden="true"><span class="octicon octicon-link"></span></a>TODO</h3>
-
-<ul>
-<li>documentation</li>
-<li>refactor code</li>
-<li>capture more types of event, like mouse over, key press, touch start, etc.</li>
-<li>crop image. Instead of comparing the whole image, user can specify a region of an image for the comparison.</li>
-<li>better wait for mechanism. </li>
-<li>custom step</li>
-<li>better ui design / logo</li>
-<li>XHR recorder</li>
-</ul>
-        </section>
-
-        <footer>
-          Chrome-recorder is maintained by <a href="https://github.com/snowcxt">snowcxt</a><br>
-          This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
-        </footer>
-
-        
-      </div>
+            </div>
+            <div class="media-body">
+                <h4 class="media-heading">Edit</h4>
+                edit the event
+                <dl class="dl-horizontal">
+                    <dt>
+                        Delay
+                    </dt>
+                    <dd>
+                        The wait time before an event
+                    </dd>
+                    <dt>
+                        Wait
+                    </dt>
+                    <dd>
+                        The wait time after an event
+                    </dd>
+                    <dt>
+                        Frame index
+                    </dt>
+                    <dd>
+                        The iframe index
+                    </dd>
+                </dl>
+            </div>
+        </div>
+        <hr />
+        <h3>Run the test case</h3>
+        <p>
+            Click <img src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424411316/run_test_zl4kbe.png" /> to run the test in a new window. You can stop the test by clicking <img src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424410487/stop_test_ryu7wj.png" />  at any time
+        </p>
+        <p>
+            Click <img src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424411368/clean_test_results_tcrqyf.png" /> to erase the test results.
+        </p>
+        <hr />
     </div>
-  </body>
+</body>
 </html>
