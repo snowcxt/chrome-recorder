@@ -1,0 +1,297 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Chrome Recorder</title>
+    <link href="../css/popup.min.css" rel="stylesheet" />
+</head>
+<body ng-app="ar">
+    <div class="container" ng-controller="RecordController">
+        <div ng-if="isReady">
+            <p>
+                <div class="btn-group btn-group-xs" role="group">
+                    <button class="btn btn-default" data-toggle="modal" data-target="#upload-events">
+                        <i class="glyphicon glyphicon-console"></i>
+                        Input JSON
+                    </button>
+                    <span class="btn btn-default btn-file">
+                        <i class="glyphicon glyphicon-open-file"></i>
+                        Upload JSON <input type="file" file-on-change="uploadJson">
+                    </span>
+                </div>
+                <div class="btn-group btn-group-xs" role="group">
+                    <button class="btn btn-default" ng-click="showJson()">
+                        <i class="glyphicon glyphicon-eye-open"></i>
+                        View JSON
+                    </button>
+                    <button class="btn btn-default" ng-click="downloadJson()">
+                        <i class="glyphicon glyphicon-save-file"></i>
+                        Download JSON
+                    </button>
+                </div>
+            </p>
+            <p>
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label for="url" class="col-sm-2 control-label">Url</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control input-sm" id="url" ng-model="record.given.url">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="type" class="col-sm-2 control-label">window type</label>
+                        <div class="col-sm-4">
+                            <select class="form-control input-sm" id="type" ng-model="record.given.windowType" ng-options="item for item in windowTypes"></select>
+                        </div>
+                        <label class="col-sm-1 control-label">size</label>
+                        <div class="col-sm-5">
+                            <div class="input-group input-group-sm">
+                                <input type="text" class="form-control" aria-label="width" ng-model="record.given.innerWidth">
+                                <span class="input-group-addon">x</span>
+                                <input type="text" class="form-control" aria-label="width" ng-model="record.given.innerHeight">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="btn-group btn-group-xs pull-right" role="group">
+                    <button class="btn btn-default" ng-click="openUrl()">
+                        <i class="glyphicon glyphicon-new-window"></i>
+                        Open url
+                    </button>
+                    <button class="btn btn-default" ng-disabled="!isTabReady || isLinked" ng-click="link()">
+                        <i class="glyphicon glyphicon-record"></i>
+                        Record events
+                    </button>
+                </div>
+            </p>
+            <br class="clearfix" />
+            <hr />
+            <div ng-if="isLinked">
+                <div ng-if="isRunning" class="btn-group btn-group-sm" role="group">
+                    <button class="btn btn-default" ng-click="takeScreenshot()">
+                        <i class="glyphicon glyphicon-camera"></i>
+                        Capture screenshot
+                        <kbd>alt</kbd> + <kbd>shift</kbd> + <kbd>c</kbd>
+                    </button>
+                    <button class="btn btn-default" ng-class="{'btn-primary': isCursorShown}" ng-click="toggleCursor()">
+                        <i class="glyphicon glyphicon-screenshot"></i>
+                        View cursor
+                        <kbd>alt</kbd> + <kbd>shift</kbd> + <kbd>v</kbd>
+                    </button>
+                    <button class="btn btn-default" ng-class="{'btn-primary': isGetElementShown}" ng-click="toggleGetWaitFor()">
+                        <i class="glyphicon glyphicon-time"></i>
+                        Wait for
+                        <kbd>alt</kbd> + <kbd>shift</kbd> + <kbd>w</kbd>
+                    </button>
+                </div>
+                <div class="btn-group btn-group-sm" role="group">
+                    <button ng-if="isRunning" class="btn btn-default" ng-click="stop()">
+                        <i class="glyphicon glyphicon-stop"></i>
+                        Stop
+                    </button>
+                    <button ng-if="!isRunning" class="btn btn-default" ng-click="resume()">
+                        <i class="glyphicon glyphicon-play"></i>
+                        Resume
+                    </button>
+                </div>
+            </div>
+            <p>
+                <div ng-if="record.actions && record.actions.length > 0" class="btn-group btn-group-xs pull-right">
+                    <button ng-if="!isTestRunning()" class="btn btn-primary" ng-click="runTest()">
+                        <i class="glyphicon glyphicon-play"></i>
+                        Run test
+                    </button>
+                    <button ng-if="isTestRunning()" class="btn btn-primary" ng-click="stopTest()">
+                        <i class="glyphicon glyphicon-stop"></i>
+                        Stop test
+                    </button>
+                    <button ng-if="isTestDone()" class="btn btn-default" ng-click="clearTestResults()">
+                        <i class="glyphicon glyphicon-erase"></i>
+                        Clean test results
+                    </button>
+                    <button class="btn btn-danger" ng-click="clear()">
+                        <i class="glyphicon glyphicon-remove"></i>
+                        Remove all
+                    </button>
+                </div>
+                <div class="clearfix"></div>
+                <ul class="list-group" ui-sortable ng-model="record.actions">
+                    <li class="list-group-item clearfix" ng-repeat="action in record.actions track by $index">
+                        <span class="label label-primary" ng-if="action.delay > 0">+{{ roundTimeDiff(action.delay) }}s</span>
+                        <span class="label label-default" ng-class="{'label-success': action.testResult.isDone }" style="margin-right: 4px;">
+                            <i class="glyphicon" ng-class="getMemoIcon(action)"></i>
+                            {{ action.memo }}
+                        </span>
+                        <span class="label label-danger" ng-if="action.actionType === 'wait' && action.testResult.isTimeout">timeout</span>
+                        <span class="label label-info" ng-if="action.wait > 0">+{{ roundTimeDiff(action.wait) }}s</span>
+                        <span ng-if="action.actionType === 'screenshot'">
+                            <img class="img-thumbnail screenshot-thumbnail" ng-src="{{ action.data }}" ng-click="openImage(action.data)" />
+                            <a ng-if="action.testResult.isDone" target="blank" href ng-click="openImage(action.testResult.imageComparison.comparisonImage)">
+                                <span class="label label-info" style="position: absolute;">{{ getMatchPercentage(action.testResult.imageComparison.compareResult.misMatchPercentage) }}%</span>
+                                <img class="img-thumbnail screenshot-thumbnail" ng-src="{{ action.testResult.imageComparison.comparisonImage }}" />
+                            </a>
+                        </span>
+                        <span class="btn-group btn-group-sm pull-right">
+                            <button ng-if="action.isEvent() && !isRunning && isTabReady && !isTestRunning()" class="btn btn-primary" ng-click="play(action)" title="play">
+                                <i class="glyphicon glyphicon-flash"></i>
+                            </button>
+                            <button ng-if="!isRunning && isTabReady && !isTestRunning()" class="btn btn-primary" ng-click="playFrom($index)" title="run test from here">
+                                <i class="glyphicon glyphicon-circle-arrow-down"></i>
+                            </button>
+                            <button ng-if="action.hasPosition() && isTabReady" class="btn btn-default" ng-class="{ active: action.hasFlag }" ng-click="toggleFlag(action)" title="show position">
+                                <i class="glyphicon glyphicon-flag"></i>
+                            </button>
+                            <button class="btn btn-default" ng-click="showActionJson(action)" title="view json">
+                                <i class="glyphicon glyphicon-eye-open"></i>
+                            </button>
+                            <button class="btn btn-default" ng-click="edit(action)" title="edit">
+                                <i class="glyphicon glyphicon-pencil"></i>
+                            </button>
+                            <button class="btn btn-default" ng-click="remove($index, action)" title="remove">
+                                <i class="glyphicon glyphicon-remove-sign"></i>
+                            </button>
+                        </span>
+                    </li>
+                </ul>
+            </p>
+        </div>
+
+        <div class="modal fade" id="edit-event" tabindex="-1" role="dialog" aria-labelledby="edit event" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h6 class="modal-title" id="myModalLabel">Edit Event</h6>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-horizontal">
+                            <div class="form-group" ng-if="current.action.action.type !== 'wait'">
+                                <label for="time-diff" class="col-sm-2 control-label">Delay</label>
+                                <div class="col-sm-10">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">+</span>
+                                        <input id="time-diff" type="text" class="form-control" aria-label="delay" ng-model="current.action.delay">
+                                        <span class="input-group-addon">ms</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="memo" class="col-sm-2 control-label">Memo</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="memo" ng-model="current.action.memo">
+                                </div>
+                            </div>
+                            <div class="form-group" ng-if="current.action.action.type !== 'wait'">
+                                <label for="time-wait" class="col-sm-2 control-label">Wait</label>
+                                <div class="col-sm-10">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">+</span>
+                                        <input id="time-wait" type="text" class="form-control" aria-label="wait" ng-model="current.action.wait">
+                                        <span class="input-group-addon">ms</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group" ng-if="current.action.action.type === 'wait'">
+                                <label for="time-out" class="col-sm-2 control-label">Time out</label>
+                                <div class="col-sm-10">
+                                    <div class="input-group">
+                                        <input id="time-out" type="text" class="form-control" aria-label="wait" ng-model="current.action.data.timeOut">
+                                        <span class="input-group-addon">ms</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group" ng-if="current.action.hasPosition()">
+                                <label class="col-sm-2 control-label">Position</label>
+                                <div class="col-sm-10">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">x</span>
+                                        <input type="text" class="form-control" ng-model="current.action.action.x">
+                                        <span class="input-group-addon">y</span>
+                                        <input type="text" class="form-control" ng-model="current.action.action.y">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group" ng-if="current.action.hasValue()">
+                                <label for="value" class="col-sm-2 control-label">Value</label>
+                                <div class="col-sm-10">
+                                    <input id="value" type="text" class="form-control" ng-model="current.action.action.value">
+                                </div>
+                            </div>
+                            <div class="form-group" ng-if="current.action.action.type === 'scroll'">
+                                <label class="col-sm-2 control-label">Scroll</label>
+                                <div class="col-sm-10">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">scroll x</span>
+                                        <input type="text" class="form-control" ng-model="current.action.action.scrollX">
+                                        <span class="input-group-addon">scroll y</span>
+                                        <input type="text" class="form-control" ng-model="current.action.action.scrollY">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group" ng-if="current.action.actionType !== 'screenshot'">
+                                <label for="frameIndex" class="col-sm-2 control-label">Frame index</label>
+                                <div class="col-sm-10">
+                                    <input id="frameIndex" type="text" class="form-control" ng-model="current.action.action.frameIndex">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="upload-events" tabindex="-1" role="dialog" aria-labelledby="edit event" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h6 class="modal-title" id="myModalLabel">Upload events</h6>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group">
+                                <textarea class="form-control" ng-model="uploadedEvents"></textarea>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="inputJson()">Upload</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="events-json" tabindex="-1" role="dialog" aria-labelledby="json" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h6 class="modal-title" id="myModalLabel">JSON</h6>
+                    </div>
+                    <div class="modal-body">
+                        <p style="word-wrap: break-word;">
+                            {{ eventsJson }}
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../Scripts/lodash.min.js"></script>
+    <script src="../Scripts/jquery-2.1.3.min.js"></script>
+    <script src="jquery-ui.min.js"></script>
+    <script src="../Scripts/bootstrap.min.js"></script>
+    <script src="../Scripts/angular.min.js"></script>
+    <script src="sortable.js"></script>
+    <script src="resemble.js"></script>
+    <script src="app.js"></script>
+    <script src="ui-recorder.js"></script>
+    <script src="controllers/record.js"></script>
+</body>
+</html>
