@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
@@ -9,16 +9,8 @@
         h1 img {
             height: 100px;
         }
-
-        p img, li img {
-            height: 25px;
-        }
-
-        dt img {
-            height: 25px;
-        }
     </style>
-    <title>Chrome-recorder by snowcxt</title>
+    <title>Chrome Recorder</title>
 </head>
 <body>
     <div class="container">
@@ -29,7 +21,16 @@
             </p>
             <p>
                 You can install the extension via <a target="_blank" href="https://chrome.google.com/webstore/detail/gjdedjgddbgejncikonfdikgmjakmnoi">Chrome store</a>.
-                After the installation, please restart the Chrome then you can launch this extension and upload the sample test - <a target="_blank" href="http://res.cloudinary.com/hypr6wanu/raw/upload/v1424411812/getbootstrap_d2t3u0.json">getbootstrap.json</a> by clicking <img src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424413351/upload_cghgc2.png" /> button and click <img src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424411316/run_test_zl4kbe.png" /> button to run the test.
+                After the installation, please restart the Chrome then you can launch this extension and upload the sample test -
+                <a target="_blank" href="http://res.cloudinary.com/hypr6wanu/raw/upload/v1424411812/getbootstrap_d2t3u0.json">getbootstrap.json</a> by clicking
+                <span class="btn btn-default btn-xs">
+                    <i class="glyphicon glyphicon-open-file"></i>
+                    upload json
+                </span> button and click
+                <span class="btn btn-xs btn-primary">
+                    <i class="glyphicon glyphicon-play"></i>
+                    Run test
+                </span> button to run the test.
             </p>
         </div>
         <hr />
@@ -37,64 +38,99 @@
             Upload saved test case
         </h3>
         <p>
-            <img src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424390416/input-upload_mtz115.png" />
+            <span class="btn btn-xs btn-default">
+                <i class="glyphicon glyphicon-console"></i>
+                Input JSON
+            </span> : Copy json into the textarea and click upload
         </p>
         <p>
-            Input JSON- copy json into the textarea and click upload
-        </p>
-        <p>
-            Upload JSON- browse a json file and upload the file
+            <span class="btn btn-xs btn-default">
+                <i class="glyphicon glyphicon-open-file"></i>
+                Upload JSON
+            </span> : Browse a json file and upload the file
         </p>
         <hr />
         <h3>Save the test case</h3>
         <p>
-            <img src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424411545/download_json_pkcaly.png" />
+            <span class="btn btn-xs btn-default">
+                <i class="glyphicon glyphicon-eye-open"></i>
+                View JSON
+            </span> : View the whole json file
         </p>
         <p>
-            View JSON - view the whole json file
-        </p>
-        <p>
-            Download JSON - download the json file
+            <span class="btn btn-xs btn-default">
+                <i class="glyphicon glyphicon-save-file"></i>
+                Download JSON
+            </span> : Download the json file
         </p>
         <hr />
         <h3>Create a new test case</h3>
         <p class="alert alert-danger" role="alert">
             Chrome Recorder now can only record clicks, inputs and document level scroll events
         </p>
-
         <ol>
             <li>
                 input the url, window type and window size
             </li>
             <li>
-                click <img src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424391067/record_events_d9ih0o.png" /> to open the url.
+                click <span class="btn btn-xs btn-default"><i class="glyphicon glyphicon-new-window"></i>Open url</span> to open the url.
                 <span class="text-danger">(Please do not resize the window. If you want to change the size, please input the window size again and open a new window) </span>
             </li>
             <li>
-                click <img src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424391067/record_events_d9ih0o.png" /> to start the events recording
+                click <span class="btn btn-xs btn-default"><i class="glyphicon glyphicon-record"></i>Record events</span> to start the events recording
                 <p>
-                    Now the extension will capture click, input the document level scroll events. You can click <img src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424391129/take_screenshot_ewfrwj.png" /> to take a screenshot as a checking point of the testing case.
+                    Now the extension will capture click, input the document level scroll events. You can click <span class="btn btn-sm btn-default">
+                        <i class="glyphicon glyphicon-camera"></i>
+                        Capture screenshot
+                        <kbd>alt</kbd> + <kbd>shift</kbd> + <kbd>c</kbd>
+                    </span> to take a screenshot as a checking point of the testing case.
                 </p>
                 <p>
-                    In case of that the click event handler stops the default browser behavior, the Chrome Recorder cannot receive the click event. You can turn on the cursor position by clicking <img src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424391190/view_cursor_b8puce.png" />. Now the Chrome Record can capture the click event, however it will not trigger the actual click event. You need to click <img src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424391190/view_cursor_b8puce.png" /> again to turn it off and click the element.
+                    In case of that the click event handler stops the default browser behavior, the Chrome Recorder cannot receive the click event. You can turn on the cursor position by clicking
+                    <span class="btn btn-sm btn-default">
+                        <i class="glyphicon glyphicon-screenshot"></i>
+                        View cursor
+                        <kbd>alt</kbd> + <kbd>shift</kbd> + <kbd>v</kbd>
+                    </span>. Now the Chrome Record can capture the click event, however it will not trigger the actual click event. You need to click
+                    <span class="btn  btn-sm btn-default">
+                        <i class="glyphicon glyphicon-screenshot"></i>
+                        View cursor
+                        <kbd>alt</kbd> + <kbd>shift</kbd> + <kbd>v</kbd>
+                    </span> again to turn it off and click the element.
                 </p>
             </li>
             <li>
-                click <img src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424390416/waitfor_tj3z26.png" /> to get an element for waiting. The test case will pause the test process until the selected element shows up.
+                click <span class="btn btn-sm btn-default">
+                    <i class="glyphicon glyphicon-time"></i>
+                    Wait for
+                    <kbd>alt</kbd> + <kbd>shift</kbd> + <kbd>w</kbd>
+                </span> to get an element for waiting. The test case will pause the test process until the selected element shows up.
             </li>
             <li>
-                click <img src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424391318/stop_nnm3en.png" /> / <img src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424391318/resume_gxo6te.png" /> button to stop / resume the events capture
+                click <span class="btn btn-sm btn-default">
+                    <i class="glyphicon glyphicon-stop"></i>
+                    Stop
+                </span> / <span class="btn btn-default btn-sm">
+                    <i class="glyphicon glyphicon-play"></i>
+                    Resume
+                </span> button to stop / resume the events capture
+            </li>
+            <li>
+                click <span class="btn btn-xs btn-danger">
+                    <i class="glyphicon glyphicon-remove"></i>
+                    Remove all
+                </span> to clear all the events
             </li>
         </ol>
         <hr />
         <h3>
             Edit an event
         </h3>
-
         <div class="media">
             <div class="media-left">
-                <img class="media-object" src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424411040/play_onfqyr.png">
-
+                <span class="btn btn-primary">
+                    <i class="glyphicon glyphicon-flash"></i>
+                </span>
             </div>
             <div class="media-body">
                 <h4 class="media-heading">Play</h4>
@@ -103,18 +139,23 @@
         </div>
         <div class="media">
             <div class="media-left">
-                <img class="media-object" src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424411040/play_blow_lsb9hp.png">
-
+                <span class="btn btn-primary">
+                    <i class="glyphicon glyphicon-circle-arrow-down"></i>
+                </span>
             </div>
             <div class="media-body">
                 <h4 class="media-heading">Play below</h4>
-                play all the events below. It is a good way to test the delay/wait time and events sequence. You can stop the test by clicking <img src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424410487/stop_test_ryu7wj.png" /> at any time. (only available when the url is open and event capture is stopped)
+                play all the events below. It is a good way to test the delay/wait time and events sequence. You can stop the test by clicking <span class="btn btn-primary btn-xs">
+                    <i class="glyphicon glyphicon-stop"></i>
+                    Stop test
+                </span> at any time. (only available when the url is open and event capture is stopped)
             </div>
         </div>
         <div class="media">
             <div class="media-left">
-                <img class="media-object" src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424411040/flag_rlswb3.png">
-
+                <span class="btn btn-default">
+                    <i class="glyphicon glyphicon-flag"></i>
+                </span>
             </div>
             <div class="media-body">
                 <h4 class="media-heading">Flag</h4>
@@ -123,8 +164,9 @@
         </div>
         <div class="media">
             <div class="media-left">
-                <img class="media-object" src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424411041/view_json_bvbagn.png">
-
+                <span class="btn btn-default">
+                    <i class="glyphicon glyphicon-eye-open"></i>
+                </span>
             </div>
             <div class="media-body">
                 <h4 class="media-heading">View</h4>
@@ -133,8 +175,9 @@
         </div>
         <div class="media">
             <div class="media-left">
-                <img class="media-object" src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424411040/edit_json_vekwjv.png">
-
+                <span class="btn btn-default">
+                    <i class="glyphicon glyphicon-pencil"></i>
+                </span>
             </div>
             <div class="media-body">
                 <h4 class="media-heading">Edit</h4>
@@ -161,13 +204,33 @@
                 </dl>
             </div>
         </div>
+        <div class="media">
+            <div class="media-left">
+                <span class="btn btn-default">
+                    <i class="glyphicon glyphicon-remove-sign"></i>
+                </span>
+            </div>
+            <div class="media-body">
+                <h4 class="media-heading">Remove</h4>
+                remove an event
+            </div>
+        </div>
         <hr />
         <h3>Run the test case</h3>
         <p>
-            Click <img src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424411316/run_test_zl4kbe.png" /> to run the test in a new window. You can stop the test by clicking <img src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424410487/stop_test_ryu7wj.png" />  at any time
+            Click <span class="btn btn-primary btn-xs">
+                <i class="glyphicon glyphicon-play"></i>
+                Run test
+            </span> to run the test in a new window. You can stop the test by clicking <span class="btn btn-primary btn-xs">
+                <i class="glyphicon glyphicon-stop"></i>
+                Stop test
+            </span> at any time
         </p>
         <p>
-            Click <img src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424411368/clean_test_results_tcrqyf.png" /> to erase the test results.
+            Click <span class="btn btn-default btn-xs">
+                <i class="glyphicon glyphicon-erase"></i>
+                Clean test results
+            </span> to erase the test results.
         </p>
         <hr />
     </div>
