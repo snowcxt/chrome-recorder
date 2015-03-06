@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
@@ -17,12 +17,12 @@
         <div class="jumbotron">
             <h1><img src="http://res.cloudinary.com/hypr6wanu/image/upload/v1424411963/icon_zc0x6p.png" /> Chrome Recorder</h1>
             <p>
-                Chrome Recorder is a chrome extension that can record the user interactions, take screenshots and replay the actions.
+                Chrome Recorder is a chrome extension that can record the user interactions, take screenshots and replay the actions. Chrome Recorder also can mock XHR calls with a HAR file
             </p>
             <p>
                 You can install the extension via <a target="_blank" href="https://chrome.google.com/webstore/detail/gjdedjgddbgejncikonfdikgmjakmnoi">Chrome store</a>.
                 After the installation, please restart the Chrome then you can launch this extension and upload the sample test -
-                <a target="_blank" href="http://res.cloudinary.com/hypr6wanu/raw/upload/v1424411812/getbootstrap_d2t3u0.json">getbootstrap.json</a> by clicking
+                <a target="_blank" href="getbootstrap.json">getbootstrap.json</a> by clicking
                 <span class="btn btn-default btn-xs">
                     <i class="glyphicon glyphicon-open-file"></i>
                     upload json
@@ -33,214 +33,305 @@
                 </span> button to run the test.
             </p>
         </div>
-        <hr />
-        <h3>
-            Upload saved test case
-        </h3>
-        <p>
-            <span class="btn btn-xs btn-default">
-                <i class="glyphicon glyphicon-console"></i>
-                Input JSON
-            </span> : Copy json into the textarea and click upload
-        </p>
-        <p>
-            <span class="btn btn-xs btn-default">
-                <i class="glyphicon glyphicon-open-file"></i>
-                Upload JSON
-            </span> : Browse a json file and upload the file
-        </p>
-        <hr />
-        <h3>Save the test case</h3>
-        <p>
-            <span class="btn btn-xs btn-default">
-                <i class="glyphicon glyphicon-eye-open"></i>
-                View JSON
-            </span> : View the whole json file
-        </p>
-        <p>
-            <span class="btn btn-xs btn-default">
-                <i class="glyphicon glyphicon-save-file"></i>
-                Download JSON
-            </span> : Download the json file
-        </p>
-        <hr />
-        <h3>Create a new test case</h3>
-        <p class="alert alert-danger" role="alert">
-            Chrome Recorder now can only record clicks, inputs and document level scroll events
-        </p>
-        <ol>
-            <li>
-                input the url, window type and window size
+
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active">
+                <a href="#user-interactions" aria-controls="home" role="tab" data-toggle="tab">User interactions</a>
             </li>
-            <li>
-                click <span class="btn btn-xs btn-default"><i class="glyphicon glyphicon-new-window"></i>Open url</span> to open the url.
-                <span class="text-danger">(Please do not resize the window. If you want to change the size, please input the window size again and open a new window) </span>
+            <li role="presentation">
+                <a href="#har-entries" aria-controls="profile" role="tab" data-toggle="tab">XHR mock</a>
             </li>
-            <li>
-                click <span class="btn btn-xs btn-default"><i class="glyphicon glyphicon-record"></i>Record events</span> to start the events recording
+        </ul>
+
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="user-interactions">
+                <h3>
+                    User interactions tab
+                    <small>record the user interactions, take screenshots and replay the actions</small>
+                </h3>
+                <hr />
+                <h4>
+                    Open saved test case
+                </h4>
                 <p>
-                    Now the extension will capture click, input the document level scroll events. You can click <span class="btn btn-sm btn-default">
-                        <i class="glyphicon glyphicon-camera"></i>
-                        Capture screenshot
-                        <kbd>alt</kbd> + <kbd>shift</kbd> + <kbd>c</kbd>
-                    </span> to take a screenshot as a checking point of the testing case.
+                    <span class="btn btn-xs btn-default">
+                        <i class="glyphicon glyphicon-open"></i>
+                        Open Test Cast JSON
+                    </span> : Browse a test cast JSON file and upload the file
+                </p>
+                <hr />
+                <h4>Save the test case</h4>
+                <p>
+                    <span class="btn btn-xs btn-default">
+                        <i class="glyphicon glyphicon-save"></i>
+                        Save Test Cast JSON
+                    </span> : Save the test cast JSON file
+                </p>
+                <hr />
+                <h4>Create a new test case</h4>
+                <p class="alert alert-danger" role="alert">
+                    Chrome Recorder now can only record clicks, inputs and document level scroll events
+                </p>
+                <ol>
+                    <li>
+                        input the url, window type and window size
+                    </li>
+                    <li>
+                        click <span class="btn btn-xs btn-default"><i class="glyphicon glyphicon-new-window"></i>Open url</span> to open the url.
+                        <strong class="text-danger">(Please do not resize the window. If you want to change the size, please input the window size again and open a new window) </strong>
+                    </li>
+                    <li>
+                        click <span class="btn btn-xs btn-default"><i class="glyphicon glyphicon-record"></i>Record events</span> to start the events recording
+                        <p>
+                            Now the extension will capture click, input the document level scroll events. You can click <span class="btn btn-sm btn-default">
+                                <i class="glyphicon glyphicon-camera"></i>
+                                Capture screenshot
+                                <kbd>alt</kbd> + <kbd>shift</kbd> + <kbd>c</kbd>
+                            </span> to take a screenshot as a checking point of the testing case.
+                        </p>
+                        <p>
+                            In case of that the click event handler stops the default browser behavior, the Chrome Recorder cannot receive the click event. You can turn on the cursor position by clicking
+                            <span class="btn btn-sm btn-default">
+                                <i class="glyphicon glyphicon-screenshot"></i>
+                                View cursor
+                                <kbd>alt</kbd> + <kbd>shift</kbd> + <kbd>v</kbd>
+                            </span>. Now the Chrome Record can capture the click event, however it will not trigger the actual click event. You need to click
+                            <span class="btn  btn-sm btn-default">
+                                <i class="glyphicon glyphicon-screenshot"></i>
+                                View cursor
+                                <kbd>alt</kbd> + <kbd>shift</kbd> + <kbd>v</kbd>
+                            </span> again to turn it off and click the element.
+                        </p>
+                    </li>
+                    <li>
+                        click <span class="btn btn-sm btn-default">
+                            <i class="glyphicon glyphicon-time"></i>
+                            Wait for
+                            <kbd>alt</kbd> + <kbd>shift</kbd> + <kbd>w</kbd>
+                        </span> to get an element for waiting. The test case will pause the test process until the selected element shows up.
+                    </li>
+                    <li>
+                        click <span class="btn btn-sm btn-default">
+                            <i class="glyphicon glyphicon-stop"></i>
+                            Stop
+                        </span> / <span class="btn btn-default btn-sm">
+                            <i class="glyphicon glyphicon-play"></i>
+                            Resume
+                        </span> button to stop / resume the events capture
+                    </li>
+                    <li>
+                        click <span class="btn btn-xs btn-danger">
+                            <i class="glyphicon glyphicon-remove"></i>
+                            Remove all
+                        </span> to clear all the events
+                    </li>
+                </ol>
+                <hr />
+                <h4>
+                    Edit an event
+                </h4>
+                <div class="media">
+                    <div class="media-left">
+                        <span class="btn btn-primary">
+                            <i class="glyphicon glyphicon-flash"></i>
+                        </span>
+                    </div>
+                    <div class="media-body">
+                        <h5 class="media-heading">Play</h5>
+                        play the event. (only available when the url is open and event capture is stopped)
+                    </div>
+                </div>
+                <div class="media">
+                    <div class="media-left">
+                        <span class="btn btn-primary">
+                            <i class="glyphicon glyphicon-circle-arrow-down"></i>
+                        </span>
+                    </div>
+                    <div class="media-body">
+                        <h5 class="media-heading">Play below</h5>
+                        play all the events below. It is a good way to test the delay/wait time and events sequence. You can stop the test by clicking <span class="btn btn-primary btn-xs">
+                            <i class="glyphicon glyphicon-stop"></i>
+                            Stop test
+                        </span> at any time. (only available when the url is open and event capture is stopped)
+                    </div>
+                </div>
+                <div class="media">
+                    <div class="media-left">
+                        <span class="btn btn-default">
+                            <i class="glyphicon glyphicon-flag"></i>
+                        </span>
+                    </div>
+                    <div class="media-body">
+                        <h5 class="media-heading">Flag</h5>
+                        highlight the click/input/wait for element position on the page. (only available when the url is open)
+                    </div>
+                </div>
+                <div class="media">
+                    <div class="media-left">
+                        <span class="btn btn-default">
+                            <i class="glyphicon glyphicon-eye-open"></i>
+                        </span>
+                    </div>
+                    <div class="media-body">
+                        <h5 class="media-heading">View</h5>
+                        view the JSON of an event
+                    </div>
+                </div>
+                <div class="media">
+                    <div class="media-left">
+                        <span class="btn btn-default">
+                            <i class="glyphicon glyphicon-pencil"></i>
+                        </span>
+                    </div>
+                    <div class="media-body">
+                        <h5 class="media-heading">Edit</h5>
+                        edit the event
+                        <dl class="dl-horizontal">
+                            <dt>
+                                Delay
+                            </dt>
+                            <dd>
+                                The wait time before an event
+                            </dd>
+                            <dt>
+                                Wait
+                            </dt>
+                            <dd>
+                                The wait time after an event
+                            </dd>
+                            <dt>
+                                Frame index
+                            </dt>
+                            <dd>
+                                The iframe index
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+                <div class="media">
+                    <div class="media-left">
+                        <span class="btn btn-default">
+                            <i class="glyphicon glyphicon-remove-sign"></i>
+                        </span>
+                    </div>
+                    <div class="media-body">
+                        <h5 class="media-heading">Remove</h5>
+                        remove an event
+                    </div>
+                </div>
+                <div class="media">
+                    <div class="media-left">
+                    </div>
+                    <div class="media-body">
+                        <h5 class="media-heading">Drag & Drop</h5>
+                        Drag and drop items to change the event orders
+                    </div>
+                </div>
+                <hr />
+                <h4>Run the test case</h4>
+                <p>
+                    Click <span class="btn btn-primary btn-xs">
+                        <i class="glyphicon glyphicon-play"></i>
+                        Run test
+                    </span> to run the test in a new window. You can stop the test by clicking <span class="btn btn-primary btn-xs">
+                        <i class="glyphicon glyphicon-stop"></i>
+                        Stop test
+                    </span> at any time
                 </p>
                 <p>
-                    In case of that the click event handler stops the default browser behavior, the Chrome Recorder cannot receive the click event. You can turn on the cursor position by clicking
-                    <span class="btn btn-sm btn-default">
-                        <i class="glyphicon glyphicon-screenshot"></i>
-                        View cursor
-                        <kbd>alt</kbd> + <kbd>shift</kbd> + <kbd>v</kbd>
-                    </span>. Now the Chrome Record can capture the click event, however it will not trigger the actual click event. You need to click
-                    <span class="btn  btn-sm btn-default">
-                        <i class="glyphicon glyphicon-screenshot"></i>
-                        View cursor
-                        <kbd>alt</kbd> + <kbd>shift</kbd> + <kbd>v</kbd>
-                    </span> again to turn it off and click the element.
+                    Click <span class="btn btn-default btn-xs">
+                        <i class="glyphicon glyphicon-erase"></i>
+                        Clean test results
+                    </span> to erase the test results.
                 </p>
-            </li>
-            <li>
-                click <span class="btn btn-sm btn-default">
-                    <i class="glyphicon glyphicon-time"></i>
-                    Wait for
-                    <kbd>alt</kbd> + <kbd>shift</kbd> + <kbd>w</kbd>
-                </span> to get an element for waiting. The test case will pause the test process until the selected element shows up.
-            </li>
-            <li>
-                click <span class="btn btn-sm btn-default">
-                    <i class="glyphicon glyphicon-stop"></i>
-                    Stop
-                </span> / <span class="btn btn-default btn-sm">
-                    <i class="glyphicon glyphicon-play"></i>
-                    Resume
-                </span> button to stop / resume the events capture
-            </li>
-            <li>
-                click <span class="btn btn-xs btn-danger">
-                    <i class="glyphicon glyphicon-remove"></i>
-                    Remove all
-                </span> to clear all the events
-            </li>
-        </ol>
-        <hr />
-        <h3>
-            Edit an event
-        </h3>
-        <div class="media">
-            <div class="media-left">
-                <span class="btn btn-primary">
-                    <i class="glyphicon glyphicon-flash"></i>
-                </span>
+                <hr />
             </div>
-            <div class="media-body">
-                <h4 class="media-heading">Play</h4>
-                play the event. (only available when the url is open and event capture is stopped)
-            </div>
-        </div>
-        <div class="media">
-            <div class="media-left">
-                <span class="btn btn-primary">
-                    <i class="glyphicon glyphicon-circle-arrow-down"></i>
-                </span>
-            </div>
-            <div class="media-body">
-                <h4 class="media-heading">Play below</h4>
-                play all the events below. It is a good way to test the delay/wait time and events sequence. You can stop the test by clicking <span class="btn btn-primary btn-xs">
-                    <i class="glyphicon glyphicon-stop"></i>
-                    Stop test
-                </span> at any time. (only available when the url is open and event capture is stopped)
-            </div>
-        </div>
-        <div class="media">
-            <div class="media-left">
-                <span class="btn btn-default">
-                    <i class="glyphicon glyphicon-flag"></i>
-                </span>
-            </div>
-            <div class="media-body">
-                <h4 class="media-heading">Flag</h4>
-                highlight the click/input/wait for element position on the page. (only available when the url is open)
-            </div>
-        </div>
-        <div class="media">
-            <div class="media-left">
-                <span class="btn btn-default">
-                    <i class="glyphicon glyphicon-eye-open"></i>
-                </span>
-            </div>
-            <div class="media-body">
-                <h4 class="media-heading">View</h4>
-                view the JSON of an event
-            </div>
-        </div>
-        <div class="media">
-            <div class="media-left">
-                <span class="btn btn-default">
-                    <i class="glyphicon glyphicon-pencil"></i>
-                </span>
-            </div>
-            <div class="media-body">
-                <h4 class="media-heading">Edit</h4>
-                edit the event
-                <dl class="dl-horizontal">
-                    <dt>
-                        Delay
-                    </dt>
-                    <dd>
-                        The wait time before an event
-                    </dd>
-                    <dt>
-                        Wait
-                    </dt>
-                    <dd>
-                        The wait time after an event
-                    </dd>
-                    <dt>
-                        Frame index
-                    </dt>
-                    <dd>
-                        The iframe index
-                    </dd>
-                </dl>
+            <div role="tabpanel" class="tab-pane" id="har-entries">
+                <h3>
+                    XHR mock tab
+                    <small>use har as the mock data to mock the XHR request</small>
+                </h3>
+                <div class="alert alert-danger" role="alert">
+                    Please be sure you have installed and launched the <a class="alert-link" target="_blank" href="https://chrome.google.com/webstore/detail/fambdbeipfbkbflmgaibbpmhpnggidmj">socket server</a>
+                </div>
+                <hr />
+                <h4>
+                    Open HAR file
+                </h4>
+                <p>
+                    <span class="btn-group btn-group-xs " role="group">
+                        <span class="btn btn-default">
+                            <i class="glyphicon glyphicon-open"></i>
+                            Open HAR
+                        </span>
+                        <span class="btn btn-default dropdown-toggle">
+                            <span class="caret"></span>
+                        </span>
+                    </span> : Browse a HAR file and upload the file.
+                </p>
+                <p>
+                    You can click <span class="btn btn-default dropdown-toggle btn-xs">
+                        <span class="caret"></span>
+                    </span> to filter the HAR file
+                </p>
+                <p>
+                    You can use Chrome Developer tools To get the HAR: Bring up <b>Chrome Developer tools</b>, click <b>Network</b>, right click and select <b>Save as HAR with content</b>
+                </p>
+                <hr />
+                <h4>Save the HAR file</h4>
+                <p>
+                    <span class="btn btn-xs btn-default">
+                        <i class="glyphicon glyphicon-save"></i>
+                        Save HAR
+                    </span> : Save the HAR file
+                </p>
+                <hr />
+                <h4>Add parameter exceptions</h4>
+                <p>
+                    <div class="input-group" style="max-width: 450px;">
+                        <input type="text" class="form-control" placeholder="Add parameter exceptions (separate by ,)">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button">
+                                <i class="glyphicon glyphicon-plus-sign"></i>
+                                add
+                            </button>
+                        </span>
+                    </div>
+                </p>
+                <p>
+                    During the XHR mock, the tool will find the response in the HAR by the request method, url and parameters. You can sepecify some parameter exceptions here (separate by ,) that will be omitted.
+                </p>
+                <hr />
+                <h4>
+                    Start XHR mock
+                </h4>
+                <p>
+                    Click <span class="btn btn-primary btn-xs">
+                        <i class="glyphicon glyphicon-headphones"></i>
+                        Start xhr mock
+                    </span> to start the XHR mock. The tool starts to check all the xhr requests. If the request method, url and parameters are matched with an entry in the XHR file, the response will be replaced by the response content of this entry.
+                </p>
+                <hr />
+                <h4>Stop XHR mock</h4>
+                <p>
+                    <span class="btn btn-danger btn-xs">
+                        <i class="glyphicon glyphicon-off"></i>
+                        Stop xhr mock
+                    </span>
+                </p>
+                <hr />
+                <h4>Remove an entry</h4>
+                <p>
+                    <button class="btn btn-xs btn-default btn-xs">
+                        <i class="glyphicon glyphicon-remove-sign"></i>
+                        remove
+                    </button>
+                </p>
+                <hr />
             </div>
         </div>
-        <div class="media">
-            <div class="media-left">
-                <span class="btn btn-default">
-                    <i class="glyphicon glyphicon-remove-sign"></i>
-                </span>
-            </div>
-            <div class="media-body">
-                <h4 class="media-heading">Remove</h4>
-                remove an event
-            </div>
-        </div>
-        <div class="media">
-            <div class="media-left">
-            </div>
-            <div class="media-body">
-                <h4 class="media-heading">Drag & Drop</h4>
-                Drag and drop items to change the event orders
-            </div>
-        </div>
-        <hr />
-        <h3>Run the test case</h3>
-        <p>
-            Click <span class="btn btn-primary btn-xs">
-                <i class="glyphicon glyphicon-play"></i>
-                Run test
-            </span> to run the test in a new window. You can stop the test by clicking <span class="btn btn-primary btn-xs">
-                <i class="glyphicon glyphicon-stop"></i>
-                Stop test
-            </span> at any time
-        </p>
-        <p>
-            Click <span class="btn btn-default btn-xs">
-                <i class="glyphicon glyphicon-erase"></i>
-                Clean test results
-            </span> to erase the test results.
-        </p>
-        <hr />
     </div>
+    <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 </body>
 </html>
