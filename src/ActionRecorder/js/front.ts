@@ -23,12 +23,23 @@ module ArFront {
     export class ElementInfo {
         tagName: string;
         innerText: string;
-        computedStyle: CSSStyleDeclaration;
+        computedStyle: any;
         constructor(element: HTMLElement) {
             if (element) {
                 this.tagName = element.tagName;
-                this.computedStyle = window.getComputedStyle(element);
                 this.innerText = element.innerText;
+                this.computedStyle = {};
+
+                var style = window.getComputedStyle(element),
+                    value;
+
+                for (var i = 0; i < style.length; i++) {
+                    var key = style[i];
+                    if (key.indexOf('-') !== 0) {
+                        value = style.getPropertyValue(key);
+                        this.computedStyle[key] = value;
+                    }
+                }
             }
         }
     }

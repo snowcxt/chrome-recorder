@@ -49,6 +49,7 @@
     <TypeScriptCompile Include="popup\controllers\record.ts" />
     <TypeScriptCompile Include="js\background.ts" />
     <TypeScriptCompile Include="js\front.ts" />
+    <TypeScriptCompile Include="popup\request-helper.ts" />
     <TypeScriptCompile Include="popup\ui-recorder.ts" />
     <TypeScriptCompile Include="Scripts\typings\angularjs\angular-animate.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\angularjs\angular-cookies.d.ts" />
@@ -72,6 +73,8 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="css\bootstrap.min.css" />
+    <Content Include="css\dropdowns-enhancement.min.css" />
     <Content Include="css\popup.css">
       <DependentUpon>popup.css.bundle</DependentUpon>
     </Content>
@@ -85,6 +88,7 @@
       <DependentUpon>style.css</DependentUpon>
     </Content>
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="popup\dropdowns-enhancement.js" />
     <Content Include="popup\jquery-ui.min.js" />
     <Content Include="popup\popup.js">
       <DependentUpon>popup.js.bundle</DependentUpon>
@@ -95,6 +99,11 @@
     <Content Include="popup\resemble.js" />
     <Content Include="popup\index.html" />
     <Content Include="popup\sortable.js" />
+    <Content Include="popup\views\ui-tab\events-json.html" />
+    <Content Include="popup\views\ui-tab\edit-event.html" />
+    <Content Include="popup\views\server-tab.html" />
+    <Content Include="popup\views\ui-tab.html" />
+    <Content Include="popup\views\ui-tab\user-interactions.html" />
     <Content Include="Scripts\angular-animate.js" />
     <Content Include="Scripts\angular-animate.min.js" />
     <Content Include="Scripts\angular-aria.js" />

@@ -196,7 +196,7 @@ module Ar {
             var lastAction: ActionHistory;
             if (this.actions.length > 0) {
                 lastAction = this.actions[this.actions.length - 1];
-                if (lastAction.action.type === type) {
+                if (lastAction.action && lastAction.action.type === type) {
                     return lastAction;
                 }
             }
@@ -309,24 +309,24 @@ module Ar {
         img.src = imageUrl;
     }
 
+    var getWindowSizeTimeout: number;
     function getWindowSize(tabId: number, next: (response: {
         w: number;
         h: number;
         devicePixelRatio: number;
     }) => void) {
-        try {
-            chrome.tabs.sendMessage(tabId, { type: 'front-size' },(response) => {
-                if (response) {
-                    next(response);
-                } else {
-                    getWindowSize(tabId, next);
-                }
-            });
-        } catch (e) {
-            setTimeout(() => {
+        chrome.tabs.sendMessage(tabId, { type: 'front-size' },(response) => {
+            clearTimeout(getWindowSizeTimeout);
+            if (response) {
+                next(response);
+            } else {
                 getWindowSize(tabId, next);
-            }, 10);
-        }
+            }
+        });
+
+        getWindowSizeTimeout = setTimeout(() => {
+            getWindowSize(tabId, next);
+        }, 300);
     }
 
     function resizeWindow(tabId: number, win: chrome.windows.Window, innerWidth: number, innerHeight: number, next: (window: chrome.windows.Window) => void) {
@@ -433,7 +433,7 @@ module Ar {
         }
     }
 
-    function playActions(tab: chrome.tabs.Tab, record: Ar.Record, actions: ActionHistory[], cleanFlag: boolean, notify: (actions: ActionHistory) => void) {
+    function playActions(tab: chrome.tabs.Tab, record: Record, actions: ActionHistory[], cleanFlag: boolean, notify: (actions: ActionHistory) => void) {
         if (record.testRunningStatus === TestRunningStatus.RUNNING && actions.length > 0) {
             var action = actions.shift();
 
@@ -454,12 +454,12 @@ module Ar {
         }
     }
 
-    export function runActionsFrom(tab: chrome.tabs.Tab, record: Ar.Record, index: number, cleanFlag: boolean, notify: (actions: ActionHistory) => void) {
+    export function runActionsFrom(tab: chrome.tabs.Tab, record: Record, index: number, cleanFlag: boolean, notify: (actions: ActionHistory) => void) {
         record.testRunningStatus = TestRunningStatus.RUNNING;
         playActions(tab, record, record.actions.slice(index), cleanFlag, notify);
     }
 
-    export function runRecord(record: Ar.Record, notify: (actions: ActionHistory) => void) {
+    export function runRecord(record: Record, notify: (actions: ActionHistory) => void) {
         createWindow(record.given.url, record.given.windowType, record.given.innerWidth, record.given.innerHeight,(win) => {
             runActionsFrom(win.tabs[0], record, 0, false, notify);
         });

@@ -1,7 +1,7 @@
 {
     "name": "Chrome Recorder",
-    "description": "Record user interactions, take screenshots and replay the actions",
-    "version": "0.0.0.2",
+    "description": "Record the user interactions, take screenshots and replay the actions. Also can mock XHR calls with a HAR file",
+    "version": "0.0.1.3",
     "manifest_version": 2,
     "icons": {
         "16": "icon.png",
@@ -49,6 +49,7 @@
         "js/front.js.map",
         "js/front.ts"
     ],
+
     "browser_action": {
         "default_icon": {
             "19": "icon.png",
@@ -59,7 +60,10 @@
 
     "permissions": [
         "tabs",
+        "webRequest",
+        "webRequestBlocking",
         "<all_urls>"
     ],
+
     "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
 }

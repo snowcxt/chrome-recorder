@@ -6,7 +6,7 @@ chrome.browserAction.onClicked.addListener(function (tab) {
             chrome.windows.create({
                 url: "popup/index.html",
                 type: "popup",
-                width: 1000,
+                width: 1150,
                 height: 700
             });
         });

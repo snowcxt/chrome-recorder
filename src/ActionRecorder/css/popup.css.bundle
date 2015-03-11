@@ -12,7 +12,8 @@
   </settings>
   <!--The order of the <file> elements determines the order of the files in the bundle.-->
   <files>
+    <file>/css/bootstrap.min.css</file>
+    <file>/css/dropdowns-enhancement.min.css</file>
     <file>/css/style.css</file>
-    <file>/Content/bootstrap.css</file>
   </files>
 </bundle>

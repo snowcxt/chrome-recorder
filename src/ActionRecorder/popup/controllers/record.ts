@@ -1,8 +1,11 @@
 ﻿/// <reference path="../../scripts/typings/bootstrap/bootstrap.d.ts" />
-angular.module('ar').controller('RecordController', ['$scope', ($scope) => {
+/// <reference path="../request-helper.ts" />
+/// <reference path="../../scripts/typings/angularjs/angular.d.ts" />
+angular.module('ar').controller('RecordController', ['$scope', '$http', ($scope, $http: ng.IHttpService) => {
     var record: Ar.Record = null,
         currentTab: chrome.tabs.Tab = null,
         background = null;
+
     window.onbeforeunload = () => {
         if (background) {
             background.popup = null;
@@ -17,6 +20,47 @@ angular.module('ar').controller('RecordController', ['$scope', ($scope) => {
     $scope.isRunning = false;
     $scope.isCursorShown = false;
     $scope.isGetElementShown = false;
+
+    $scope.isResponseDataReady = false;
+    $scope.showResponseError = true;
+
+    $scope.mockServer = {
+        ignoreRequestParmasInput: ""
+    };
+    var mockServerAddress = 'http://127.0.0.1:8593/';
+
+    function resetUiRecorderStatus() {
+        $scope.isTabReady = false;
+        $scope.isLinked = false;
+        $scope.isRunning = false;
+        $scope.isCursorShown = false;
+        $scope.isGetElementShown = false;
+    }
+
+    function resetServerMockStatus() {
+        $scope.isResponseDataReady = false;
+    }
+
+    function upload(e, next: (result: string) => void) {
+        var element = e.target;
+        if (element.files && element.files.length > 0) {
+            var textFile = element.files[0],
+                reader = new FileReader();
+            reader.readAsText(textFile);
+            reader.onload = () => {
+                next(reader.result);
+            };
+
+            element.value = "";
+        }
+    }
+
+    function download(filename, text) {
+        var pom = document.createElement('a');
+        pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+        pom.setAttribute('download', filename);
+        pom.click();
+    }
 
     //#region helper functions
     $scope.roundTimeDiff = (timeDiff) => {
@@ -44,48 +88,15 @@ angular.module('ar').controller('RecordController', ['$scope', ($scope) => {
     
     //#region json
     $scope.uploadJson = (e) => {
-        var element = e.target;
-        if (element.files && element.files.length > 0) {
-            var textFile = element.files[0],
-                reader = new FileReader();
-            reader.readAsText(textFile);
-            reader.onload = () => {
-                record = Ar.createRecord(angular.fromJson(reader.result));
-                $scope.$apply(() => {
-                    $scope.record = record;
-                    $scope.isTabReady = false;
-                    $scope.isLinked = false;
-                    $scope.isRunning = false;
-                    $scope.isCursorShown = false;
-                    $scope.isGetElementShown = false;
-                });
-            };
-
-            element.value = "";
-        }
+        upload(e,(result) => {
+            record = Ar.createRecord(angular.fromJson(result));
+            $scope.$apply(() => {
+                $scope.record = record;
+                resetUiRecorderStatus();
+            });
+        });
     };
 
-    $scope.inputJson = () => {
-        record = Ar.createRecord(angular.fromJson($scope.uploadedEvents));
-        $scope.record = record;
-        $scope.isTabReady = false;
-        $scope.isLinked = false;
-        $scope.isRunning = false;
-        $scope.isCursorShown = false;
-        $scope.isGetElementShown = false;
-    };
-
-    $scope.showJson = () => {
-        $scope.eventsJson = angular.toJson(record.getJson());
-        $('#events-json').modal();
-    };
-
-    function download(filename, text) {
-        var pom = document.createElement('a');
-        pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-        pom.setAttribute('download', filename);
-        pom.click();
-    }
 
     $scope.downloadJson = () => {
         var json = angular.toJson(record.getJson());
@@ -154,7 +165,9 @@ angular.module('ar').controller('RecordController', ['$scope', ($scope) => {
     };
 
     $scope.remove = (index, action: Ar.ActionHistory) => {
-        action.unsetFlag(currentTab.id);
+        if (currentTab) {
+            action.unsetFlag(currentTab.id);
+        }
         record.removeAction(index);
     };
 
@@ -245,6 +258,115 @@ angular.module('ar').controller('RecordController', ['$scope', ($scope) => {
     };
     //#endregion
 
+    //#region xhr
+    $scope.harMimeTypeFilters = { "application/json": true, "text/html": true };
+    $scope.ignoreRequestParams = ["__RequestVerificationToken", "timestamp"];
+
+    $scope.addIgnoreParams = () => {
+        if ($scope.mockServer.ignoreRequestParmasInput) {
+            var params = _.map($scope.mockServer.ignoreRequestParmasInput.split(','),(p: string) => {
+                return p.trim();
+            });
+            _.each(params,(p) => {
+                $scope.ignoreRequestParams.push(p);
+            });
+            $scope.mockServer.ignoreRequestParmasInput = "";
+        }
+    };
+
+    $scope.removeIgnoreParam = (index) => {
+        $scope.ignoreRequestParams.splice(index, 1);
+    };
+
+    $scope.harEntries = [];
+
+    $scope.uploadHar = (e) => {
+        upload(e,(result) => {
+            var filters: string[] = [];
+
+            for (var key in $scope.harMimeTypeFilters) {
+                if ($scope.harMimeTypeFilters[key]) {
+                    filters.push(key);
+                }
+            }
+
+            $scope.$apply(() => {
+                $scope.harEntries = Ar.Rh.filterHarEntries(angular.fromJson(result).log.entries, filters);
+                resetServerMockStatus();
+            });
+        });
+    };
+
+    $scope.downloadHar = () => {
+        var json = angular.toJson({ log: { entries: $scope.harEntries } });
+        download('test.har', json);
+    };
+
+    $scope.startResponseMock = () => {
+        $scope.showResponseError = false;
+        $scope.isResponseDataReady = false;
+        var json = angular.toJson($scope.harEntries),
+            num = Math.ceil(json.length / 3000);
+
+        $http.get(mockServerAddress + 'clear').success(() => {
+            for (var i = 0; i < num; i++) {
+                $http.put(mockServerAddress + (i + 1) + "/" + num, json.substring(i * 3000, i * 3000 + 3000)).success((data: any) => {
+                    if (data.data === 'true') {
+                        $scope.isResponseDataReady = true;
+                    }
+                });
+            }
+        }).error(() => {
+            $scope.showResponseError = true;
+        });
+    };
+
+    $scope.stopResponseMock = () => {
+        $scope.isResponseDataReady = false;
+    };
+
+    $scope.closeResponseAlert = () => {
+        $scope.showResponseError = false;
+    };
+
+    $scope.removeEntry = (index) => {
+        $scope.harEntries.splice(index, 1);
+    };
+
+    function parseXhr(url: string, method: string, requestBody: any): chrome.webRequest.BlockingResponse {
+        if ($scope.isResponseDataReady) {
+            var index = Ar.Rh.getMockRequestIndex(url, method, requestBody, $scope.ignoreRequestParams, $scope.harEntries);
+            if (index !== -1) {
+                $scope.$apply(() => {
+                    $scope.harEntries[index].hitLog.push(new Date());
+                });
+                return {
+                    redirectUrl: mockServerAddress + 'get/' + index
+                };
+            }
+        }
+
+        return {};
+    }
+
+    chrome.webRequest.onBeforeRequest.addListener(
+        (info) => {
+            if ($scope.isResponseDataReady) {
+                if (info.requestBody) {
+                    return parseXhr(info.url, info.method, Ar.Rh.parseRequestBody(info.requestBody));
+                } else {
+                    return parseXhr(info.url, info.method, null);
+                }
+            }
+
+            return {};
+        }, {
+            urls: ["<all_urls>"],
+            types: ["xmlhttprequest"]
+        }, ["blocking", "requestBody"]);
+
+    //#endregion
+
     chrome.runtime.onMessage.addListener((message: ArFront.Message, sender) => {
         switch (message.type) {
             case 'ready':
@@ -310,4 +432,4 @@ angular.module('ar').controller('RecordController', ['$scope', ($scope) => {
             });
         });
     });
-}]); 
+}]);

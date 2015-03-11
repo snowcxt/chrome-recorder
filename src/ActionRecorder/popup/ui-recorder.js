@@ -146,7 +146,7 @@ var Ar;
             var lastAction;
             if (this.actions.length > 0) {
                 lastAction = this.actions[this.actions.length - 1];
-                if (lastAction.action.type === type) {
+                if (lastAction.action && lastAction.action.type === type) {
                     return lastAction;
                 }
             }
@@ -251,22 +251,20 @@ var Ar;
         img.src = imageUrl;
     }
     Ar.resizeImage = resizeImage;
+    var getWindowSizeTimeout;
     function getWindowSize(tabId, next) {
-        try {
-            chrome.tabs.sendMessage(tabId, { type: 'front-size' }, function (response) {
-                if (response) {
-                    next(response);
-                }
-                else {
-                    getWindowSize(tabId, next);
-                }
-            });
-        }
-        catch (e) {
-            setTimeout(function () {
+        chrome.tabs.sendMessage(tabId, { type: 'front-size' }, function (response) {
+            clearTimeout(getWindowSizeTimeout);
+            if (response) {
+                next(response);
+            }
+            else {
                 getWindowSize(tabId, next);
-            }, 10);
-        }
+            }
+        });
+        getWindowSizeTimeout = setTimeout(function () {
+            getWindowSize(tabId, next);
+        }, 300);
     }
     function resizeWindow(tabId, win, innerWidth, innerHeight, next) {
         var devicePixelRatio, width, height;
