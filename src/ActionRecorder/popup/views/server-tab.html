@@ -1,0 +1,71 @@
+﻿<p>
+    <div class="alert alert-danger alert-dismissible" role="alert" ng-if="showResponseError">
+        Please be sure you have installed and launched the <a class="alert-link" target="_blank" href="https://chrome.google.com/webstore/detail/fambdbeipfbkbflmgaibbpmhpnggidmj">socket server</a>
+        <button type="button" class="close" ng-click="closeResponseAlert()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="btn-group btn-group-xs" role="group">
+        <span class="btn btn-default btn-file">
+            <i class="glyphicon glyphicon-open"></i>
+            Open HAR <input type="file" file-on-change="uploadHar">
+        </span>
+        <button data-toggle="dropdown" class="btn btn-default dropdown-toggle" data-placeholder="false">
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li ng-repeat="(key, enabled) in harMimeTypeFilters">
+                <input type="checkbox" id="{{key}}" name="harMimeTypeFilters" ng-model="harMimeTypeFilters[key]">
+                <label for="{{key}}">{{ key }}</label>
+            </li>
+        </ul>
+    </div>
+    <div class="btn-group btn-group-xs" role="group">
+        <button class="btn btn-default" ng-click="downloadHar()">
+            <i class="glyphicon glyphicon-save"></i>
+            Save HAR
+        </button>
+    </div>
+</p>
+<div ng-if="harEntries.length > 0">
+    <div class="form-group">
+        <div class="input-group">
+            <input type="text" class="form-control" placeholder="Add parameter exceptions (separate by ,)" ng-model="mockServer.ignoreRequestParmasInput" />
+            <span class="input-group-btn">
+                <button class="btn btn-default" type="button" ng-click="addIgnoreParams()">
+                    <i class="glyphicon glyphicon-plus-sign"></i>
+                    add
+                </button>
+            </span>
+        </div>
+    </div>
+    <p>
+        <span ng-repeat="param in ignoreRequestParams" style="margin-right: 4px;" class="label label-primary">
+            {{ param }}
+            <span class="glyphicon glyphicon-remove" ng-click="removeIgnoreParam($index)"></span>
+        </span>
+    </p>
+    <hr />
+    <div class="btn-group btn-group-xs">
+        <button class="btn btn-primary" ng-if="!isResponseDataReady" ng-click="startResponseMock()">
+            <i class="glyphicon glyphicon-headphones"></i>
+            Start xhr mock
+        </button>
+        <button class="btn btn-danger" ng-if="isResponseDataReady" ng-click="stopResponseMock()">
+            <i class="glyphicon glyphicon-off"></i>
+            Stop xhr mock
+        </button>
+    </div>
+    <div class="clearfix"></div>
+    <ul class="list-group">
+        <li class="list-group-item clearfix entry-list" ng-repeat="entry in harEntries track by $index">
+            <span class="label label-info">{{ entry.hitLog.length }}</span>
+            <span class="label label-default">{{ entry.request.method }}</span>
+            <span title="{{ entry.request.url }}" class="truncate">{{ entry.request.url }}</span>
+            <button class="btn btn-xs btn-default pull-right" ng-click="removeEntry($index)">
+                <i class="glyphicon glyphicon-remove-sign"></i>
+                remove
+            </button>
+        </li>
+    </ul>
+</div>

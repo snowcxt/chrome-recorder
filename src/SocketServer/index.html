@@ -1,0 +1,62 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" ng-app="mockServer" ng-csp>
+<head>
+    <title>Chrome Recorder Socket Server</title>
+    <link href="index.min.css" rel="stylesheet" />
+</head>
+<body ng-controller="MainController">
+    <button class="pull-right btn btn-xs btn-danger" ng-click="close()">
+        <i class="glyphicon glyphicon-remove"></i>
+    </button>
+    <div class="container">
+        <h5 class="draggable">
+            <i class="glyphicon glyphicon-transfer"></i>
+            Chrome Recorder Socket Server
+        </h5>
+        <hr class="hr" />
+        <p>
+            <button class="pull-left btn btn-xs btn-default" ng-if="dataSet" ng-click="showJson()">
+                <i class="glyphicon glyphicon-eye-open"></i>
+                View Data
+            </button>
+            <button class="pull-right btn btn-xs btn-link" ng-if="logs.length > 0" ng-click="clearHistroy()">
+                <i class="glyphicon glyphicon-ban-circle"></i>
+                Clear
+            </button>
+        </p>
+        <div class="clearfix"></div>
+        <ul class="list-group">
+            <li class="list-group-item" ng-repeat="log in logs">
+                <span class="label label-default">{{ log.method }}</span>
+                <span class="label label-primary">{{ log.time | date:'HH:mm:ss' }}</span>
+                <span class="text-muted truncate" title="{{ log.url.last }}">{{ log.url.last }}</span>
+            </li>
+        </ul>
+
+        <div class="modal fade" id="show-json" tabindex="-1" role="dialog" aria-labelledby="json" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h6 class="modal-title" id="myModalLabel">DATA</h6>
+                    </div>
+                    <div class="modal-body">
+                        <p style="word-wrap: break-word;">
+                            {{ data.json }}
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="Scripts/angular.js"></script>
+    <script src="Scripts/jquery-1.9.1.js"></script>
+    <script src="Scripts/bootstrap.js"></script>
+    <script src="js/socket-helper.js"></script>
+    <script src="js/index.js"></script>
+</body>
+</html>

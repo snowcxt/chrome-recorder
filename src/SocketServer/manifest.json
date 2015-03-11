@@ -1,0 +1,23 @@
+﻿{
+    "name": "Chrome recorder socket server",
+    "version": "0.0.0.1",
+    "manifest_version": 2,
+    "description": "Chrome recorder socket server",
+    "icons": {
+        "128": "icon.png"
+    },
+
+    "app": {
+        "background": {
+            "scripts": [ "background.js" ]
+        }
+    },
+    "sockets": {
+        "tcp": {
+            "connect": [ "127.0.0.1:*" ]
+        },
+        "tcpServer": {
+            "listen": [ "127.0.0.1:*" ]
+        }
+    }
+}

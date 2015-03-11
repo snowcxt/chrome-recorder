@@ -1,0 +1,57 @@
+﻿<div ng-if="record.actions && record.actions.length > 0" class="btn-group btn-group-xs pull-right">
+    <button ng-if="!isTestRunning()" class="btn btn-primary" ng-click="runTest()">
+        <i class="glyphicon glyphicon-play"></i>
+        Run test
+    </button>
+    <button ng-if="isTestRunning()" class="btn btn-primary" ng-click="stopTest()">
+        <i class="glyphicon glyphicon-stop"></i>
+        Stop test
+    </button>
+    <button ng-if="isTestDone()" class="btn btn-default" ng-click="clearTestResults()">
+        <i class="glyphicon glyphicon-erase"></i>
+        Clean test results
+    </button>
+    <button class="btn btn-danger" ng-click="clear()">
+        <i class="glyphicon glyphicon-remove"></i>
+        Remove all
+    </button>
+</div>
+<div class="clearfix"></div>
+<ul class="list-group" ui-sortable ng-model="record.actions">
+    <li class="list-group-item clearfix" ng-repeat="action in record.actions track by $index">
+        <span class="label label-primary" ng-if="action.delay > 0">+{{ roundTimeDiff(action.delay) }}s</span>
+        <span class="label label-default" ng-class="{'label-success': action.testResult.isDone }" style="margin-right: 4px;">
+            <i class="glyphicon" ng-class="getMemoIcon(action)"></i>
+            {{ action.memo }}
+        </span>
+        <span class="label label-danger" ng-if="action.actionType === 'wait' && action.testResult.isTimeout">timeout</span>
+        <span class="label label-info" ng-if="action.wait > 0">+{{ roundTimeDiff(action.wait) }}s</span>
+        <span ng-if="action.actionType === 'screenshot'">
+            <img class="img-thumbnail screenshot-thumbnail" ng-src="{{ action.data }}" ng-click="openImage(action.data)" />
+            <a ng-if="action.testResult.isDone" target="blank" href ng-click="openImage(action.testResult.imageComparison.comparisonImage)">
+                <span class="label label-info" style="position: absolute;">{{ getMatchPercentage(action.testResult.imageComparison.compareResult.misMatchPercentage) }}%</span>
+                <img class="img-thumbnail screenshot-thumbnail" ng-src="{{ action.testResult.imageComparison.comparisonImage }}" />
+            </a>
+        </span>
+        <span class="btn-group btn-group-sm pull-right">
+            <button ng-if="action.isEvent() && !isRunning && isTabReady && !isTestRunning()" class="btn btn-primary" ng-click="play(action)" title="play">
+                <i class="glyphicon glyphicon-flash"></i>
+            </button>
+            <button ng-if="!isRunning && isTabReady && !isTestRunning()" class="btn btn-primary" ng-click="playFrom($index)" title="run test from here">
+                <i class="glyphicon glyphicon-circle-arrow-down"></i>
+            </button>
+            <button ng-if="action.hasPosition() && isTabReady" class="btn btn-default" ng-class="{ active: action.hasFlag }" ng-click="toggleFlag(action)" title="show position">
+                <i class="glyphicon glyphicon-flag"></i>
+            </button>
+            <button class="btn btn-default" ng-click="showActionJson(action)" title="view json">
+                <i class="glyphicon glyphicon-eye-open"></i>
+            </button>
+            <button class="btn btn-default" ng-click="edit(action)" title="edit">
+                <i class="glyphicon glyphicon-pencil"></i>
+            </button>
+            <button class="btn btn-default" ng-click="remove($index, action)" title="remove">
+                <i class="glyphicon glyphicon-remove-sign"></i>
+            </button>
+        </span>
+    </li>
+</ul>

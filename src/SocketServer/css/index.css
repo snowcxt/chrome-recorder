@@ -1,0 +1,28 @@
+﻿html {
+  height: 100%;
+  box-shadow: 0 0 5px 1px #333 inset;
+}
+.draggable {
+  cursor: pointer;
+  -webkit-app-region: drag;
+}
+.hr {
+  margin-top: 10px;
+  margin-bottom: 15px;
+}
+.truncate {
+  float: right;
+  width: 420px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.input-group-xs > .form-control,
+.input-group-xs > .input-group-addon,
+.input-group-xs > .input-group-btn > .btn {
+  height: 22px;
+  padding: 1px 5px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+/*# sourceMappingURL=index.css.map */

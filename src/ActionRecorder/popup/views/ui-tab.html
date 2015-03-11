@@ -1,0 +1,86 @@
+﻿<p>
+    <div class="btn-group btn-group-xs" role="group">
+        <span class="btn btn-default btn-file">
+            <i class="glyphicon glyphicon-open"></i>
+            Open Test Cast JSON <input type="file" file-on-change="uploadJson">
+        </span>
+    </div>
+    <div class="btn-group btn-group-xs" role="group">
+        <button class="btn btn-default" ng-click="downloadJson()">
+            <i class="glyphicon glyphicon-save"></i>
+            Save Test Cast JSON
+        </button>
+    </div>
+</p>
+<hr />
+<p>
+    <div class="form-horizontal">
+        <div class="row">
+            <div class="form-group">
+                <label for="url" class="col-sm-2 control-label">Url</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="url" ng-model="record.given.url">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="type" class="col-sm-2 control-label">Window type</label>
+                <div class="col-sm-4">
+                    <select class="form-control" id="type" ng-model="record.given.windowType" ng-options="item for item in windowTypes"></select>
+                </div>
+                <label class="col-sm-1 control-label">Size</label>
+                <div class="col-sm-5">
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" aria-label="width" ng-model="record.given.innerWidth">
+                        <span class="input-group-addon">x</span>
+                        <input type="text" class="form-control" aria-label="width" ng-model="record.given.innerHeight">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="btn-group btn-group-xs pull-right" role="group">
+        <button class="btn btn-default" ng-click="openUrl()">
+            <i class="glyphicon glyphicon-new-window"></i>
+            Open url
+        </button>
+        <button class="btn btn-default" ng-disabled="!isTabReady || isLinked" ng-click="link()">
+            <i class="glyphicon glyphicon-record"></i>
+            Record events
+        </button>
+    </div>
+</p>
+<br class="clearfix" />
+<hr />
+<p>
+    <div ng-if="isLinked && isRunning" class="btn-group btn-group-sm" role="group">
+        <button class="btn btn-default" ng-click="takeScreenshot()">
+            <i class="glyphicon glyphicon-camera"></i>
+            Capture screenshot
+            <kbd>alt</kbd> + <kbd>shift</kbd> + <kbd>c</kbd>
+        </button>
+        <button class="btn btn-default" ng-class="{'btn-primary': isCursorShown}" ng-click="toggleCursor()">
+            <i class="glyphicon glyphicon-screenshot"></i>
+            View cursor
+            <kbd>alt</kbd> + <kbd>shift</kbd> + <kbd>v</kbd>
+        </button>
+        <button class="btn btn-default" ng-class="{'btn-primary': isGetElementShown}" ng-click="toggleGetWaitFor()">
+            <i class="glyphicon glyphicon-time"></i>
+            Wait for
+            <kbd>alt</kbd> + <kbd>shift</kbd> + <kbd>w</kbd>
+        </button>
+    </div>
+    <div ng-if="isLinked" class="btn-group btn-group-sm" role="group">
+        <button ng-if="isRunning" class="btn btn-default" ng-click="stop()">
+            <i class="glyphicon glyphicon-stop"></i>
+            Stop
+        </button>
+        <button ng-if="!isRunning" class="btn btn-default" ng-click="resume()">
+            <i class="glyphicon glyphicon-play"></i>
+            Resume
+        </button>
+    </div>
+</p>
+<p ng-include="'views/ui-tab/user-interactions.html'"></p>
+
+<ng-include src="'views/ui-tab/edit-event.html'"></ng-include>
+<ng-include src="'views/ui-tab/events-json.html'"></ng-include>
