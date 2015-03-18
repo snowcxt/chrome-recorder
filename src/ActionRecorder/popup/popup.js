@@ -1,4 +1,126 @@
-﻿/**
+﻿//download.js v3.1, by dandavis; 2008-2014. [CCBY2] see http://danml.com/download.html for tests/usage
+// v1 landed a FF+Chrome compat way of downloading strings to local un-named files, upgraded to use a hidden frame and optional mime
+// v2 added named files via a[download], msSaveBlob, IE (10+) support, and window.URL support for larger+faster saves than dataURLs
+// v3 added dataURL and Blob Input, bind-toggle arity, and legacy dataURL fallback was improved with force-download mime and base64 support. 3.1 improved safari handling.
+
+// https://github.com/rndme/download
+
+// data can be a string, Blob, File, or dataURL
+function download(data, strFileName, strMimeType) {
+
+    var self = window, // this script is only for browsers anyway...
+		u = "application/octet-stream", // this default mime also triggers iframe downloads
+		m = strMimeType || u,
+		x = data,
+		D = document,
+		a = D.createElement("a"),
+		z = function (a) { return String(a); },
+		B = (self.Blob || self.MozBlob || self.WebKitBlob || z);
+    B = B.call ? B.bind(self) : Blob;
+    var fn = strFileName || "download",
+    blob,
+    fr;
+
+
+    if (String(this) === "true") { //reverse arguments, allowing download.bind(true, "text/xml", "export.xml") to act as a callback
+        x = [x, m];
+        m = x[0];
+        x = x[1];
+    }
+
+
+
+
+    //go ahead and download dataURLs right away
+    if (String(x).match(/^data\:[\w+\-]+\/[\w+\-]+[,;]/)) {
+        return navigator.msSaveBlob ?  // IE10 can't do a[download], only Blobs:
+			navigator.msSaveBlob(d2b(x), fn) :
+			saver(x); // everyone else can save dataURLs un-processed
+    }//end if dataURL passed?
+
+    blob = x instanceof B ?
+        x :
+		new B([x], { type: m });
+
+
+    function d2b(u) {
+        var p = u.split(/[:;,]/),
+		t = p[1],
+		dec = p[2] == "base64" ? atob : decodeURIComponent,
+		bin = dec(p.pop()),
+		mx = bin.length,
+		i = 0,
+		uia = new Uint8Array(mx);
+
+        for (i; i < mx; ++i) uia[i] = bin.charCodeAt(i);
+
+        return new B([uia], { type: t });
+    }
+
+    function saver(url, winMode) {
+
+        if ('download' in a) { //html5 A[download] 			
+            a.href = url;
+            a.setAttribute("download", fn);
+            a.innerHTML = "downloading...";
+            D.body.appendChild(a);
+            setTimeout(function () {
+                a.click();
+                D.body.removeChild(a);
+                if (winMode === true) { setTimeout(function () { self.URL.revokeObjectURL(a.href); }, 250); }
+            }, 66);
+            return true;
+        }
+
+        if (typeof safari !== "undefined") { // handle non-a[download] safari as best we can:
+            url = "data:" + url.replace(/^data:([\w\/\-\+]+)/, u);
+            if (!window.open(url)) { // popup blocked, offer direct download: 
+                if (confirm("Displaying New Document\n\nUse Save As... to download, then click back to return to this page.")) { location.href = url; }
+            }
+            return true;
+        }
+
+        //do iframe dataURL download (old ch+FF):
+        var f = D.createElement("iframe");
+        D.body.appendChild(f);
+
+        if (!winMode) { // force a mime that will download:
+            url = "data:" + url.replace(/^data:([\w\/\-\+]+)/, u);
+        }
+        f.src = url;
+        setTimeout(function () { D.body.removeChild(f); }, 333);
+
+    }//end saver 
+
+
+
+
+    if (navigator.msSaveBlob) { // IE10+ : (has Blob, but not a[download] or URL)
+        return navigator.msSaveBlob(blob, fn);
+    }
+
+    if (self.URL) { // simple fast and modern way using Blob and URL:
+        saver(self.URL.createObjectURL(blob), true);
+    } else {
+        // handle non-Blob()+non-URL browsers:
+        if (typeof blob === "string" || blob.constructor === z) {
+            try {
+                return saver("data:" + m + ";base64," + self.btoa(blob));
+            } catch (y) {
+                return saver("data:" + m + "," + encodeURIComponent(blob));
+            }
+        }
+
+        // Blob but not URL:
+        fr = new FileReader();
+        fr.onload = function (e) {
+            saver(this.result);
+        };
+        fr.readAsDataURL(blob);
+    }
+    return true;
+} /* end download() */
+/**
  * @license
  * lodash 3.5.0 (Custom Build) lodash.com/license | Underscore.js 1.8.2 underscorejs.org/LICENSE
  * Build: `lodash modern -o ./lodash.js`
@@ -1748,6 +1870,11 @@ var Ar;
                 });
             }
         };
+        ActionHistory.prototype.setAsBaseline = function () {
+            if (this.testResult && this.testResult.isDone) {
+                this.data = this.testResult.imageComparison.actualImage;
+            }
+        };
         ActionHistory.prototype.hasValue = function () {
             return this.action && this.action.type === 'input';
         };
@@ -1995,7 +2122,7 @@ var Ar;
                     return resemble(zoomedImage).compareTo(history.data).onComplete(function (data) {
                         if (record.testRunningStatus !== Ar.TestRunningStatus.RUNNING)
                             return next(false);
-                        history.testResult.imageComparison = new Ar.ImageCompare(data);
+                        history.testResult.imageComparison = new ImageCompare(zoomedImage, data);
                         history.testResult.isDone = true;
                         return next(true);
                     });
@@ -2048,7 +2175,8 @@ var Ar;
     }
     Ar.runRecord = runRecord;
     var ImageCompare = (function () {
-        function ImageCompare(compareResult) {
+        function ImageCompare(actualImage, compareResult) {
+            this.actualImage = actualImage;
             this.compareResult = compareResult;
             this.comparisonImage = this.compareResult.getImageDataUrl();
         }
@@ -2060,7 +2188,7 @@ var Ar;
         record.given = recordInterface.given;
         if (recordInterface.actions) {
             recordInterface.actions.forEach(function (action) {
-                var newAction = new Ar.ActionHistory(action.delay, action.actionType, action.action, action.data);
+                var newAction = new ActionHistory(action.delay, action.actionType, action.action, action.data);
                 newAction.memo = action.memo;
                 newAction.wait = action.wait;
                 if (action.testResult) {
@@ -2154,7 +2282,7 @@ var Ar;
                                 return false;
                             }
                         }
-                        else if (entry.request.postData.text && entry.request.postData.text === requestBody) {
+                        else if (entry.request.postData.text) {
                             index = i;
                             return false;
                         }
@@ -2228,11 +2356,8 @@ angular.module('ar').controller('RecordController', ['$scope', '$http', function
             element.value = "";
         }
     }
-    function download(filename, text) {
-        var pom = document.createElement('a');
-        pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-        pom.setAttribute('download', filename);
-        pom.click();
+    function downloadJson(filename, text) {
+        download(new Blob([text]), filename, "text/plain");
     }
     //#region helper functions
     $scope.roundTimeDiff = function (timeDiff) {
@@ -2267,7 +2392,7 @@ angular.module('ar').controller('RecordController', ['$scope', '$http', function
     };
     $scope.downloadJson = function () {
         var json = angular.toJson(record.getJson());
-        download('test.json', json);
+        downloadJson('test.json', json);
     };
     //#endregion
     //#region start
@@ -2348,6 +2473,9 @@ angular.module('ar').controller('RecordController', ['$scope', '$http', function
     $scope.showActionJson = function (action) {
         $scope.eventsJson = angular.toJson(action.getJson());
         $('#events-json').modal();
+    };
+    $scope.setAsBaseline = function (action) {
+        action.setAsBaseline();
     };
     $scope.current = {
         action: null
@@ -2438,7 +2566,7 @@ angular.module('ar').controller('RecordController', ['$scope', '$http', function
     };
     $scope.downloadHar = function () {
         var json = angular.toJson({ log: { entries: $scope.harEntries } });
-        download('test.har', json);
+        downloadJson('test.har', json);
     };
     $scope.startResponseMock = function () {
         $scope.showResponseError = false;
@@ -2447,7 +2575,7 @@ angular.module('ar').controller('RecordController', ['$scope', '$http', function
         $http.get(mockServerAddress + 'clear').success(function () {
             for (var i = 0; i < num; i++) {
                 $http.put(mockServerAddress + (i + 1) + "/" + num, json.substring(i * 3000, i * 3000 + 3000)).success(function (data) {
-                    if (data.data === 'true') {
+                    if (data === 'true') {
                         $scope.isResponseDataReady = true;
                     }
                 });

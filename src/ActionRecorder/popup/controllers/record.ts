@@ -1,6 +1,8 @@
 ﻿/// <reference path="../../scripts/typings/bootstrap/bootstrap.d.ts" />
 /// <reference path="../request-helper.ts" />
 /// <reference path="../../scripts/typings/angularjs/angular.d.ts" />
+
+declare var download: any;
 angular.module('ar').controller('RecordController', ['$scope', '$http', ($scope, $http: ng.IHttpService) => {
     var record: Ar.Record = null,
         currentTab: chrome.tabs.Tab = null,
@@ -54,12 +56,8 @@ angular.module('ar').controller('RecordController', ['$scope', '$http', ($scope,
             element.value = "";
         }
     }
-
-    function download(filename, text) {
-        var pom = document.createElement('a');
-        pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-        pom.setAttribute('download', filename);
-        pom.click();
+    function downloadJson(filename, text) {
+        download(new Blob([text]), filename, "text/plain");
     }
 
     //#region helper functions
@@ -100,7 +98,7 @@ angular.module('ar').controller('RecordController', ['$scope', '$http', ($scope,
 
     $scope.downloadJson = () => {
         var json = angular.toJson(record.getJson());
-        download('test.json', json);
+        downloadJson('test.json', json);
     };
     //#endregion
 
@@ -193,6 +191,10 @@ angular.module('ar').controller('RecordController', ['$scope', '$http', ($scope,
     $scope.showActionJson = (action: Ar.ActionHistory) => {
         $scope.eventsJson = angular.toJson(action.getJson());
         $('#events-json').modal();
+    };
+
+    $scope.setAsBaseline = (action: Ar.ActionHistory) => {
+        action.setAsBaseline();
     };
 
     $scope.current = {
@@ -299,7 +301,7 @@ angular.module('ar').controller('RecordController', ['$scope', '$http', ($scope,
 
     $scope.downloadHar = () => {
         var json = angular.toJson({ log: { entries: $scope.harEntries } });
-        download('test.har', json);
+        downloadJson('test.har', json);
     };
 
     $scope.startResponseMock = () => {
@@ -311,7 +313,7 @@ angular.module('ar').controller('RecordController', ['$scope', '$http', ($scope,
         $http.get(mockServerAddress + 'clear').success(() => {
             for (var i = 0; i < num; i++) {
                 $http.put(mockServerAddress + (i + 1) + "/" + num, json.substring(i * 3000, i * 3000 + 3000)).success((data: any) => {
-                    if (data.data === 'true') {
+                    if (data === 'true') {
                         $scope.isResponseDataReady = true;
                     }
                 });

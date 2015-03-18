@@ -42,11 +42,8 @@ angular.module('ar').controller('RecordController', ['$scope', '$http', function
             element.value = "";
         }
     }
-    function download(filename, text) {
-        var pom = document.createElement('a');
-        pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-        pom.setAttribute('download', filename);
-        pom.click();
+    function downloadJson(filename, text) {
+        download(new Blob([text]), filename, "text/plain");
     }
     //#region helper functions
     $scope.roundTimeDiff = function (timeDiff) {
@@ -81,7 +78,7 @@ angular.module('ar').controller('RecordController', ['$scope', '$http', function
     };
     $scope.downloadJson = function () {
         var json = angular.toJson(record.getJson());
-        download('test.json', json);
+        downloadJson('test.json', json);
     };
     //#endregion
     //#region start
@@ -162,6 +159,9 @@ angular.module('ar').controller('RecordController', ['$scope', '$http', function
     $scope.showActionJson = function (action) {
         $scope.eventsJson = angular.toJson(action.getJson());
         $('#events-json').modal();
+    };
+    $scope.setAsBaseline = function (action) {
+        action.setAsBaseline();
     };
     $scope.current = {
         action: null
@@ -252,7 +252,7 @@ angular.module('ar').controller('RecordController', ['$scope', '$http', function
     };
     $scope.downloadHar = function () {
         var json = angular.toJson({ log: { entries: $scope.harEntries } });
-        download('test.har', json);
+        downloadJson('test.har', json);
     };
     $scope.startResponseMock = function () {
         $scope.showResponseError = false;
@@ -261,7 +261,7 @@ angular.module('ar').controller('RecordController', ['$scope', '$http', function
         $http.get(mockServerAddress + 'clear').success(function () {
             for (var i = 0; i < num; i++) {
                 $http.put(mockServerAddress + (i + 1) + "/" + num, json.substring(i * 3000, i * 3000 + 3000)).success(function (data) {
-                    if (data.data === 'true') {
+                    if (data === 'true') {
                         $scope.isResponseDataReady = true;
                     }
                 });

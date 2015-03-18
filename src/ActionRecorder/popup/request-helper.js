@@ -76,7 +76,7 @@ var Ar;
                                 return false;
                             }
                         }
-                        else if (entry.request.postData.text && entry.request.postData.text === requestBody) {
+                        else if (entry.request.postData.text) {
                             index = i;
                             return false;
                         }

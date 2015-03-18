@@ -28,10 +28,18 @@
         <span class="label label-info" ng-if="action.wait > 0">+{{ roundTimeDiff(action.wait) }}s</span>
         <span ng-if="action.actionType === 'screenshot'">
             <img class="img-thumbnail screenshot-thumbnail" ng-src="{{ action.data }}" ng-click="openImage(action.data)" />
-            <a ng-if="action.testResult.isDone" target="blank" href ng-click="openImage(action.testResult.imageComparison.comparisonImage)">
-                <span class="label label-info" style="position: absolute;">{{ getMatchPercentage(action.testResult.imageComparison.compareResult.misMatchPercentage) }}%</span>
-                <img class="img-thumbnail screenshot-thumbnail" ng-src="{{ action.testResult.imageComparison.comparisonImage }}" />
-            </a>
+            <span ng-if="action.testResult.isDone" target="blank">
+                <span ng-click="openImage(action.testResult.imageComparison.comparisonImage)">
+                    <span class="label label-info" style="position: absolute;">{{ getMatchPercentage(action.testResult.imageComparison.compareResult.misMatchPercentage) }}%</span>
+                    <img class="img-thumbnail screenshot-thumbnail" ng-src="{{ action.testResult.imageComparison.comparisonImage }}" />
+                </span>
+                <span style="position: relative">
+                    <button class="btn btn-xs btn-primary" style="position: absolute; bottom:-34px; right: 0;" title="set as baseline" ng-click="setAsBaseline(action)">
+                        <i class="glyphicon glyphicon-ok-sign"></i>
+                    </button>
+                    <img class="img-thumbnail screenshot-thumbnail" ng-src="{{ action.testResult.imageComparison.actualImage }}" ng-click="openImage(action.testResult.imageComparison.actualImage)" />
+                </span>
+            </span>
         </span>
         <span class="btn-group btn-group-sm pull-right">
             <button ng-if="action.isEvent() && !isRunning && isTabReady && !isTestRunning()" class="btn btn-primary" ng-click="play(action)" title="play">

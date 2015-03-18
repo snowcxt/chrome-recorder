@@ -84,7 +84,7 @@
                                 index = i;
                                 return false;
                             }
-                        } else if (entry.request.postData.text && entry.request.postData.text === requestBody) {
+                        } else if (entry.request.postData.text) {//&& entry.request.postData.text === requestBody
                             index = i;
                             return false;
                         }

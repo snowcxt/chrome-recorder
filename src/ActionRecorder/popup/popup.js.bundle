@@ -10,6 +10,7 @@
   </settings>
   <!--The order of the <file> elements determines the order of the files in the bundle.-->
   <files>
+    <file>../Scripts/download.js</file>
     <file>../Scripts/lodash.min.js</file>
     <file>../Scripts/jquery-2.1.3.min.js</file>
     <file>jquery-ui.min.js</file>

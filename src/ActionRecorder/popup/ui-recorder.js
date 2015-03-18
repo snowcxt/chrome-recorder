@@ -96,6 +96,11 @@ var Ar;
                 });
             }
         };
+        ActionHistory.prototype.setAsBaseline = function () {
+            if (this.testResult && this.testResult.isDone) {
+                this.data = this.testResult.imageComparison.actualImage;
+            }
+        };
         ActionHistory.prototype.hasValue = function () {
             return this.action && this.action.type === 'input';
         };
@@ -343,7 +348,7 @@ var Ar;
                     return resemble(zoomedImage).compareTo(history.data).onComplete(function (data) {
                         if (record.testRunningStatus !== Ar.TestRunningStatus.RUNNING)
                             return next(false);
-                        history.testResult.imageComparison = new Ar.ImageCompare(data);
+                        history.testResult.imageComparison = new ImageCompare(zoomedImage, data);
                         history.testResult.isDone = true;
                         return next(true);
                     });
@@ -396,7 +401,8 @@ var Ar;
     }
     Ar.runRecord = runRecord;
     var ImageCompare = (function () {
-        function ImageCompare(compareResult) {
+        function ImageCompare(actualImage, compareResult) {
+            this.actualImage = actualImage;
             this.compareResult = compareResult;
             this.comparisonImage = this.compareResult.getImageDataUrl();
         }
@@ -408,7 +414,7 @@ var Ar;
         record.given = recordInterface.given;
         if (recordInterface.actions) {
             recordInterface.actions.forEach(function (action) {
-                var newAction = new Ar.ActionHistory(action.delay, action.actionType, action.action, action.data);
+                var newAction = new ActionHistory(action.delay, action.actionType, action.action, action.data);
                 newAction.memo = action.memo;
                 newAction.wait = action.wait;
                 if (action.testResult) {

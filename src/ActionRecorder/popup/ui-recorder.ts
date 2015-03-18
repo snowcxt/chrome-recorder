@@ -55,7 +55,7 @@ module Ar {
         public testResult: {
             isDone: boolean;
             isTimeout: boolean;
-            imageComparison: Ar.ImageCompare;
+            imageComparison: ImageCompare;
         };
 
         constructor(timeDiff: number, actionType: string, action: IUserAction, data?: any) {
@@ -132,6 +132,12 @@ module Ar {
                         id: this.id
                     }
                 });
+            }
+        }
+
+        public setAsBaseline() {
+            if (this.testResult && this.testResult.isDone) {
+                this.data = this.testResult.imageComparison.actualImage;
             }
         }
 
@@ -383,7 +389,7 @@ module Ar {
         }, 200);
     }
 
-    function waitForElement(history: ActionHistory, record: Ar.Record, tabId: number, x: number, y: number, frameIndex: string, time: number, timeout: number, oldElement: ArFront.ElementInfo, next) {
+    function waitForElement(history: ActionHistory, record: Record, tabId: number, x: number, y: number, frameIndex: string, time: number, timeout: number, oldElement: ArFront.ElementInfo, next) {
         if (record.testRunningStatus !== TestRunningStatus.RUNNING) return next(false);
 
         if (time < timeout) {
@@ -403,7 +409,7 @@ module Ar {
         }
     }
 
-    function playAction(history: ActionHistory, tab: chrome.tabs.Tab, record: Ar.Record, cleanFlag: boolean, next: (isContinue: boolean) => void) {
+    function playAction(history: ActionHistory, tab: chrome.tabs.Tab, record: Record, cleanFlag: boolean, next: (isContinue: boolean) => void) {
         if (history.actionType === 'screenshot') {
             return chrome.tabs.captureVisibleTab(tab.windowId,(imgData) => {
                 if (record.testRunningStatus !== TestRunningStatus.RUNNING) return next(false);
@@ -414,7 +420,7 @@ module Ar {
                     return resemble(zoomedImage).compareTo(history.data).onComplete((data) => {
                         if (record.testRunningStatus !== TestRunningStatus.RUNNING) return next(false);
 
-                        history.testResult.imageComparison = new Ar.ImageCompare(data);
+                        history.testResult.imageComparison = new ImageCompare(zoomedImage, data);
                         history.testResult.isDone = true;
                         return next(true);
                     });
@@ -467,9 +473,11 @@ module Ar {
 
     export class ImageCompare {
         public comparisonImage: string;
+        public actualImage: string;
         public compareResult: { isSameDimensions: boolean; misMatchPercentage: number; getImageDataUrl: () => string };
 
-        constructor(compareResult) {
+        constructor(actualImage: string, compareResult) {
+            this.actualImage = actualImage;
             this.compareResult = compareResult;
             this.comparisonImage = this.compareResult.getImageDataUrl();
         }
@@ -480,7 +488,7 @@ module Ar {
         record.given = recordInterface.given;
         if (recordInterface.actions) {
             recordInterface.actions.forEach((action) => {
-                var newAction = new Ar.ActionHistory(action.delay, action.actionType, action.action, action.data);
+                var newAction = new ActionHistory(action.delay, action.actionType, action.action, action.data);
                 newAction.memo = action.memo;
                 newAction.wait = action.wait;
 
