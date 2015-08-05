@@ -222,10 +222,16 @@ var ArFront;
                 return document;
             }
         }
-        function click(x, y) {
+        function mouseEvent(event, x, y, key) {
             var ev = document.createEvent("MouseEvent"), el = document.elementFromPoint(x, y);
-            ev.initMouseEvent("click", true, true, window, null, x, y, 0, 0, false, false, false, false, 0, null);
+            ev.initMouseEvent(event, true, true, window, null, x, y, x, y, false, false, false, false, key, null);
             el.dispatchEvent(ev);
+        }
+        function click(x, y) {
+            mouseEvent("click", x, y, 0);
+        }
+        function mouseup(x, y, key) {
+            mouseEvent("mouseup", x, y, key);
         }
         function scrollTo(scrollX, scrollY) {
             window.scrollTo(scrollX, scrollY);
@@ -238,6 +244,9 @@ var ArFront;
             switch (action.type) {
                 case 'click':
                     click(action.x, action.y);
+                    break;
+                case 'mouseup':
+                    mouseup(action.x, action.y, action.key);
                     break;
                 case 'input':
                     input(action.x, action.y, action.value);

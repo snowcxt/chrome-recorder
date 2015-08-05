@@ -6,12 +6,17 @@ declare var download: any;
 angular.module('ar').controller('RecordController', ['$scope', '$http', ($scope, $http: ng.IHttpService) => {
     var record: Ar.Record = null,
         currentTab: chrome.tabs.Tab = null,
-        background = null;
+        background = null,
+        editingActionIndex: number = null;
 
     window.onbeforeunload = () => {
         if (background) {
             background.popup = null;
         }
+    };
+
+    $scope.editingAction = {
+        json: null
     };
 
     $scope.windowTypes = ['normal', 'popup', 'panel'];
@@ -188,9 +193,15 @@ angular.module('ar').controller('RecordController', ['$scope', '$http', ($scope,
         }
     };
 
-    $scope.showActionJson = (action: Ar.ActionHistory) => {
-        $scope.eventsJson = angular.toJson(action.getJson());
+    $scope.showActionJson = (index: number) => {
+        editingActionIndex = index;
+        $scope.editingAction.json = angular.toJson(record.actions[index].getJson(), true);
         $('#events-json').modal();
+    };
+
+    $scope.saveJson = () => {
+        record.actions[editingActionIndex] = Ar.createActionHistory(angular.fromJson($scope.editingAction.json));
+        $('#events-json').modal('hide');
     };
 
     $scope.setAsBaseline = (action: Ar.ActionHistory) => {

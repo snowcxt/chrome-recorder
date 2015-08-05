@@ -51,8 +51,8 @@
             <button ng-if="action.hasPosition() && isTabReady" class="btn btn-default" ng-class="{ active: action.hasFlag }" ng-click="toggleFlag(action)" title="show position">
                 <i class="glyphicon glyphicon-flag"></i>
             </button>
-            <button class="btn btn-default" ng-click="showActionJson(action)" title="view json">
-                <i class="glyphicon glyphicon-eye-open"></i>
+            <button class="btn btn-default" ng-click="showActionJson($index)" title="edit json">
+                <i class="glyphicon glyphicon-console"></i>
             </button>
             <button class="btn btn-default" ng-click="edit(action)" title="edit">
                 <i class="glyphicon glyphicon-pencil"></i>

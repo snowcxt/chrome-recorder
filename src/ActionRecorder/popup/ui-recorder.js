@@ -105,7 +105,7 @@ var Ar;
             return this.action && this.action.type === 'input';
         };
         ActionHistory.prototype.hasPosition = function () {
-            return this.action && (this.action.type === 'click' || this.action.type === 'input' || this.action.type === 'wait');
+            return this.action && (this.action.type === 'click' || this.action.type === 'mouseup' || this.action.type === 'input' || this.action.type === 'wait');
         };
         ActionHistory.prototype.isEvent = function () {
             return this.action && this.action.type !== 'wait' && this.action.type !== 'screenshot';
@@ -168,7 +168,7 @@ var Ar;
                             lastAction.action.scrollY = action.scrollY;
                         }
                         else {
-                            this.actions.push(new ActionHistory(now - this.last, action.type, action));
+                            this.actions.push(new ActionHistory(now - this.last, "event", action));
                         }
                         break;
                     case 'input':
@@ -177,11 +177,11 @@ var Ar;
                             lastAction.action.value = action.value;
                         }
                         else {
-                            this.actions.push(new ActionHistory(now - this.last, action.type, action));
+                            this.actions.push(new ActionHistory(now - this.last, "event", action));
                         }
                         break;
                     default:
-                        this.actions.push(new ActionHistory(now - this.last, action.type, action));
+                        this.actions.push(new ActionHistory(now - this.last, "event", action));
                         break;
                 }
                 this.last = now;
@@ -409,17 +409,24 @@ var Ar;
         return ImageCompare;
     })();
     Ar.ImageCompare = ImageCompare;
+    function createActionHistory(action) {
+        var newAction = new ActionHistory(action.delay, action.actionType, action.action, action.data);
+        newAction.memo = action.memo;
+        newAction.wait = action.wait;
+        if (action.testResult) {
+            newAction.testResult.isDone = true;
+            newAction.testResult.imageComparison = action.testResult.imageComparison;
+        }
+        return newAction;
+    }
+    Ar.createActionHistory = createActionHistory;
     function createRecord(recordInterface) {
         var record = new Record();
         record.given = recordInterface.given;
         if (recordInterface.actions) {
             recordInterface.actions.forEach(function (action) {
-                var newAction = new ActionHistory(action.delay, action.actionType, action.action, action.data);
-                newAction.memo = action.memo;
-                newAction.wait = action.wait;
-                if (action.testResult) {
-                    newAction.testResult.isDone = true;
-                    newAction.testResult.imageComparison = action.testResult.imageComparison;
+                var newAction = createActionHistory(action);
+                if (newAction.testResult) {
                     record.testRunningStatus = Ar.TestRunningStatus.DONE;
                 }
                 record.actions.push(newAction);

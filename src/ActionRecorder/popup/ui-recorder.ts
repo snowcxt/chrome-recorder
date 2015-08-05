@@ -7,6 +7,7 @@ module Ar {
         //element: string;
         x?: number;
         y?: number;
+        key?: number;
         scrollX?: number;
         scrollY?: number;
         value?: string;
@@ -44,7 +45,7 @@ module Ar {
     export class ActionHistory {
         id: string;
 
-        public actionType: string;
+        public actionType: string; // screenshot, wait, event
         public action: IUserAction;
         public data: any;
         public delay: number = 0;
@@ -146,7 +147,7 @@ module Ar {
         }
 
         public hasPosition() {
-            return this.action && (this.action.type === 'click' || this.action.type === 'input' || this.action.type === 'wait');
+            return this.action && (this.action.type === 'click' || this.action.type === 'mouseup' || this.action.type === 'input' || this.action.type === 'wait');
         }
 
         public isEvent() {
@@ -221,7 +222,7 @@ module Ar {
                             lastAction.action.scrollX = action.scrollX;
                             lastAction.action.scrollY = action.scrollY;
                         } else {
-                            this.actions.push(new ActionHistory(now - this.last, action.type, action));
+                            this.actions.push(new ActionHistory(now - this.last, "event", action));
                         }
                         break;
                     case 'input':
@@ -229,11 +230,11 @@ module Ar {
                         if (lastAction) {
                             lastAction.action.value = action.value;
                         } else {
-                            this.actions.push(new ActionHistory(now - this.last, action.type, action));
+                            this.actions.push(new ActionHistory(now - this.last, "event", action));
                         }
                         break;
                     default:
-                        this.actions.push(new ActionHistory(now - this.last, action.type, action));
+                        this.actions.push(new ActionHistory(now - this.last, "event", action));
                         break;
                 }
                 this.last = now;
@@ -483,18 +484,26 @@ module Ar {
         }
     }
 
+    export function createActionHistory(action): ActionHistory {
+        var newAction = new ActionHistory(action.delay, action.actionType, action.action, action.data);
+        newAction.memo = action.memo;
+        newAction.wait = action.wait;
+
+        if (action.testResult) {
+            newAction.testResult.isDone = true;
+            newAction.testResult.imageComparison = action.testResult.imageComparison;
+        }
+
+        return newAction;
+    }
+
     export function createRecord(recordInterface: Record) {
         var record = new Record();
         record.given = recordInterface.given;
         if (recordInterface.actions) {
             recordInterface.actions.forEach((action) => {
-                var newAction = new ActionHistory(action.delay, action.actionType, action.action, action.data);
-                newAction.memo = action.memo;
-                newAction.wait = action.wait;
-
-                if (action.testResult) {
-                    newAction.testResult.isDone = true;
-                    newAction.testResult.imageComparison = action.testResult.imageComparison;
+                var newAction = createActionHistory(action);
+                if (newAction.testResult) {
                     record.testRunningStatus = TestRunningStatus.DONE;
                 }
                 record.actions.push(newAction);

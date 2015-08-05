@@ -276,18 +276,26 @@ module ArFront {
             }
         }
 
-        function click(x, y) {
+        function mouseEvent(event: string, x: number, y: number, key: number) {
             var ev = document.createEvent("MouseEvent"),
                 el = document.elementFromPoint(x, y);
             ev.initMouseEvent(
-                "click",
+                event,
                 true /* bubble */, true /* cancelable */,
                 window, null,
-                x, y, 0, 0, /* coordinates */
+                x, y, x, y, /* coordinates */
                 false, false, false, false, /* modifier keys */
-                0 /*left*/, null
+                key, null
                 );
             el.dispatchEvent(ev);
+        }
+
+        function click(x, y) {
+            mouseEvent("click", x, y, 0);
+        }
+
+        function mouseup(x: number, y: number, key: number) {
+            mouseEvent("mouseup", x, y, key);
         }
 
         function scrollTo(scrollX, scrollY) {
@@ -303,6 +311,9 @@ module ArFront {
             switch (action.type) {
                 case 'click':
                     click(action.x, action.y);
+                    break;
+                case 'mouseup':
+                    mouseup(action.x, action.y, action.key);
                     break;
                 case 'input':
                     input(action.x, action.y, action.value);

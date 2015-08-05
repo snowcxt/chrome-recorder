@@ -2,11 +2,14 @@
 /// <reference path="../request-helper.ts" />
 /// <reference path="../../scripts/typings/angularjs/angular.d.ts" />
 angular.module('ar').controller('RecordController', ['$scope', '$http', function ($scope, $http) {
-    var record = null, currentTab = null, background = null;
+    var record = null, currentTab = null, background = null, editingActionIndex = null;
     window.onbeforeunload = function () {
         if (background) {
             background.popup = null;
         }
+    };
+    $scope.editingAction = {
+        json: null
     };
     $scope.windowTypes = ['normal', 'popup', 'panel'];
     $scope.isReady = false;
@@ -156,9 +159,14 @@ angular.module('ar').controller('RecordController', ['$scope', '$http', function
             action.setFlag(currentTab.id);
         }
     };
-    $scope.showActionJson = function (action) {
-        $scope.eventsJson = angular.toJson(action.getJson());
+    $scope.showActionJson = function (index) {
+        editingActionIndex = index;
+        $scope.editingAction.json = angular.toJson(record.actions[index].getJson(), true);
         $('#events-json').modal();
+    };
+    $scope.saveJson = function () {
+        record.actions[editingActionIndex] = Ar.createActionHistory(angular.fromJson($scope.editingAction.json));
+        $('#events-json').modal('hide');
     };
     $scope.setAsBaseline = function (action) {
         action.setAsBaseline();
